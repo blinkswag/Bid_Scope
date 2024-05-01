@@ -22,3 +22,11 @@ def init_app(app):
         print("Views 2 Chat")
         response = chat_controller.handle_message(file, message)
         return render_template('chat_response.html', response=response)
+    @app.route('/continue_chat', methods=['POST'])
+    def continue_chat():
+        thread_id = request.form.get('thread_id')
+        message = request.form.get('message')
+        file = request.files.get('file', None)
+        response = chat_controller.handle_message(file, message, thread_id)
+        
+        return render_template('chat_response.html', response=response)

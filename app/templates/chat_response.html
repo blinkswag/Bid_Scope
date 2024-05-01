@@ -1,3 +1,4 @@
+<!-- app/templates/chat_response.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,6 +14,12 @@
         <div>{{ message }}</div>
         {% endfor %}
     </div>
-    <a href="/">Go Back</a>
+    <form action="/continue_chat" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="thread_id" value="{{ response.thread_id }}">
+        <label for="message">Enter your message:</label>
+        <input type="text" id="message" name="message" required>
+        <button type="submit">Send</button>
+    </form>
+    <a href="/">Start New Chat</a>
 </body>
 </html>
