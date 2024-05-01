@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Response</title>
+</head>
+<body>
+    <h1>Chatbot Response</h1>
+    <div>
+        <p>Responses:</p>
+        {% for message in response.messages %}
+        <div>{{ message }}</div>
+        {% endfor %}
+    </div>
+    <a href="/">Go Back</a>
+</body>
+</html>
