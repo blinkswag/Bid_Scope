@@ -1,79 +1,117 @@
-<!-- app/templates/index.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        #chatWindow {
+            height: 333px;
+            overflow-y: scroll;
+            display: flex;
+            flex-direction: column;
+        }
+        .message {
+            padding: 8px 15px;
+            border-radius: 15px;
+            margin-bottom: 5px;
+            max-width: 70%;
+        }
+        .user-message {
+            background-color: #dcf8c6;
+            align-self: flex-end; /* Align user messages to the right */
+            margin-left: 30%; /* Ensure messages do not take full width */
+        }
+        .bot-response {
+            background-color: #f1f0f0;
+            align-self: flex-start; /* Align bot responses to the left */
+            margin-right: 30%; /* Ensure messages do not take full width */
+        }
+    </style>
+    <title>Chatbot</title>
 </head>
 <body>
-    <h1>Bidding Assistant</h1>
-    <form action="/" method="post" enctype="multipart/form-data">
-        <label for="message">Enter your message:</label>
-        <input type="text" id="message" name="message" required>
-        <br><br>
-        <label for="file">Upload a file (optional):</label>
-        <input type="file" id="file" name="file">
-        <br><br>
-        <button type="submit">Send</button>
-    </form>
-</body>
-</html> -->
+    <div class="container">
+        <h1 class="text-center mt-4">Chatbot Interface</h1>
+        <div id="chatWindow"></div>
+        <form id="chatForm" class="mb-3">
+            <input type="hidden" id="threadId" name="thread_id">
+            <div class="input-group mb-3">
+                <input type="text" id="messageInput" class="form-control" placeholder="Type your message..." required>
+                <button class="btn btn-outline-secondary" type="submit">Send</button>
+            </div>
+        </form>
+        <!-- Separate form for file uploads -->
+        <form id="fileUploadForm" class="mb-3">
+            <label for="fileUpload" class="form-label">Upload a file:</label>
+            <input class="form-control" type="file" id="fileUpload" required>
+            <button type="button" id="uploadFileBtn" class="btn btn-primary mt-2">Upload File</button>
+        </form>
+        <button type="button" id="newThreadBtn" class="btn btn-secondary">New Thread</button>
+    </div>
 
-<!-- app/templates/index.html -->
-<!-- app/templates/index.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot Home</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('form').submit(function(event) {
-                event.preventDefault(); // Prevent the default form submit
-                var formData = new FormData(this);
+            $('#chatForm').submit(function(event) {
+                event.preventDefault();
+                var messageText = $('#messageInput').val();
+                var formData = new FormData();
+                formData.append('message', messageText);
+                formData.append('thread_id', $('#threadId').val());
+
                 $.ajax({
                     type: 'POST',
                     url: '/',
                     data: formData,
-                    contentType: false,
                     processData: false,
+                    contentType: false,
                     success: function(response) {
-                        $('#responses').append('<div>' + response.message + '</div>'); // Append new message
-                        $('input[name="thread_id"]').val(response.thread_id); // Update thread ID hidden input
-                        $('#message').val(''); // Clear the message input field
-                    },
-                    error: function() {
-                        alert('Error sending message.');
+                        $('#chatWindow').append(response.message);
+                        $('#messageInput').val('');
+                        scrollToBottom();
                     }
                 });
             });
-        
-            $('#new-chat').click(function() {
-                $('#responses').empty(); // Clear the messages
-                $('input[name="thread_id"]').val(''); // Reset the thread ID
+
+            $('#uploadFileBtn').click(function() {
+                var fileData = $('#fileUpload').prop('files')[0];
+                if (!fileData) {
+                    alert('Please select a file to upload.');
+                    return;
+                }
+                var formData = new FormData();
+                formData.append('file', fileData);
+                formData.append('thread_id', $('#threadId').val());
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function() {
+                        $('#chatWindow').append('<div class="message bot-response">File uploaded successfully.</div>');
+                        $('#fileUpload').val('');
+                        scrollToBottom();
+                    },
+                    error: function() {
+                        $('#chatWindow').append('<div class="message bot-response">Failed to upload file.</div>');
+                        $('#fileUpload').val('');
+                        scrollToBottom();
+                    }
+                });
             });
+
+            $('#newThreadBtn').click(function() {
+                $('#threadId').val(''); // Reset the thread ID
+                $('#chatWindow').html(''); // Clear the chat window
+            });
+
+            function scrollToBottom() {
+                $('#chatWindow').scrollTop($('#chatWindow')[0].scrollHeight);
+            }
         });
-        </script>
-        
-</head>
-<body>
-    <h1>Bidding Assistant</h1>
-    <form action="/" method="post" enctype="multipart/form-data">
-        <label for="message">Enter your message:</label>
-        <input type="text" id="message" name="message" required>
-        <br><br>
-        <label for="file">Upload a file (optional):</label>
-        <input type="file" id="file" name="file">
-        <input type="hidden" name="thread_id">
-        <br><br>
-        <button type="submit">Send</button>
-        <button type="button" id="new-chat">New Thread</button>
-    </form>
-    <div id="responses">
-        <!-- Responses will be appended here -->
-    </div>
+    </script>
 </body>
 </html>

@@ -18,24 +18,27 @@ class ChatController:
             if file:
                 file_status = self.chat_model.upload_file(file)  
                 response['messages'].append(f"File Uploaded: {file_status}")
-            self.chat_model.send_message(response['thread_id'], message)
-        
-            run = self.chat_model.create_run(response['thread_id'])
 
-            run_ret = self.chat_model.retrieve_run(response['thread_id'], run.id)
-            run_ret = json.loads(run_ret.model_dump_json())
+            if message:
+                self.chat_model.send_message(response['thread_id'], message)
+            
+                run = self.chat_model.create_run(response['thread_id'])
 
-            while run_ret['status'] != 'completed':
-                time.sleep(5)
                 run_ret = self.chat_model.retrieve_run(response['thread_id'], run.id)
                 run_ret = json.loads(run_ret.model_dump_json())
 
-            if run_ret['status'] == 'completed':
-                responses = self.chat_model.get_messages(response['thread_id'])
-                response['messages'].extend(responses)
-            else:
-                response['messages'].append("Error: Timeout or failed run.")
-        
+                while run_ret['status'] != 'completed':
+                    time.sleep(5)
+                    run_ret = self.chat_model.retrieve_run(response['thread_id'], run.id)
+                    run_ret = json.loads(run_ret.model_dump_json())
+
+                if run_ret['status'] == 'completed':
+                    user_msg, bot_resp = self.chat_model.get_messages(response['thread_id'])
+                    response['user_message'] = user_msg
+                    response['bot_response'] = bot_resp
+                else:
+                    response['messages'].append("Error: Timeout or failed run.")
+            
         except Exception as e:
             response['messages'].append(f"An error occurred: {str(e)}")
             print("Error handling message:", e)
