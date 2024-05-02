@@ -70,5 +70,7 @@ class ChatModel:
       )
       parsed_data = json.loads(response.model_dump_json())
       content_values = [message['content'][0]['text']['value'] for message in parsed_data['data']]
-      return content_values
+      content_values.reverse()
+    #   content_values = parsed_data['data'][0]['content'][0]['text']['value']
+      return content_values[-2:]
 
