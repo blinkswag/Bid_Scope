@@ -20,7 +20,7 @@ class ChatModel:
             file_like_object = BytesIO(file_bytes)
             file_like_object.name = file_storage.filename
             pdf = self.client.files.create(file=file_like_object, purpose="assistants")
-            print(pdf.id)
+            # print(pdf.id)
             file_status = self.client.beta.vector_stores.files.create_and_poll(vector_store_id=self.vector_store_id, file_id=pdf.id).status
             self.client.beta.assistants.update(
                 assistant_id=self.assistant_id,
