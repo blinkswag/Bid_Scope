@@ -26,7 +26,7 @@ class ChatModel:
                 assistant_id=self.assistant_id,
                 tool_resources={"file_search": {"vector_store_ids": [self.vector_store_id]}}
             )
-            return f"File upload and indexing status: {file_status}"
+            return f"File Upload Status: {file_status}"
         except Exception as e:
             print(f"Failed to upload file: {e}")
             return str(e)

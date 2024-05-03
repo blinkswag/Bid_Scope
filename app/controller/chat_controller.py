@@ -7,8 +7,9 @@ class ChatController:
         self.chat_model = ChatModel()
 
     def handle_message(self, file, message, thread_id=None):
-        response = {"messages": [], "thread_id": thread_id}
+        response = {"messages": [], "thread_id": thread_id,"user_message": "", "bot_response": ""}
         try:
+            file_uploaded = False
             if not thread_id:
                 thread = self.chat_model.create_thread()
                 response['thread_id'] = thread.id
@@ -18,6 +19,7 @@ class ChatController:
             if file:
                 file_status = self.chat_model.upload_file(file)  
                 response['messages'].append(f"File Uploaded: {file_status}")
+                file_uploaded = True
 
             if message:
                 self.chat_model.send_message(response['thread_id'], message)
@@ -34,7 +36,8 @@ class ChatController:
 
                 if run_ret['status'] == 'completed':
                     user_msg, bot_resp = self.chat_model.get_messages(response['thread_id'])
-                    response['user_message'] = user_msg
+                    if not file_uploaded:
+                        response['user_message'] = user_msg
                     response['bot_response'] = bot_resp
                 else:
                     response['messages'].append("Error: Timeout or failed run.")
