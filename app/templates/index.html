@@ -15,8 +15,8 @@
             background: #f4f7f9; /* Light grey background */
         }
         .chat-container {
-            max-width: 700px;
-            margin: 50px auto;
+            max-width: 1500px; /* Adjust this value to increase or decrease the width */
+            margin: 50px 0 50px auto; /* Updated margin for right alignment */
             height: 90vh;
             display: flex;
             flex-direction: column;
@@ -27,7 +27,7 @@
         #chatWindow {
             flex-grow: 1;
             overflow-y: auto;
-            padding: 20px;
+            padding: 10px;
             border-top-left-radius: 8px;
             border-top-right-radius: 8px;
             object-fit: cover;
@@ -209,7 +209,7 @@ label[for="fileUpload"] {
         <!-- <h2 class="text-center">Chatbot</h2> -->
         <div id="chatWindow" class="d-flex flex-column">
             <div id="loadingMessage" class="message bot-response" style="display: none;">
-                <i class="fas fa-spinner fa-spin"></i> Please wait...
+                <i class="fas fa-spinner fa-spin"></i>
             </div>
         </div>
         <form id="chatForm" class="input-group">
@@ -218,12 +218,11 @@ label[for="fileUpload"] {
             <button class="btn btn-primary" type="submit" aria-label="Send"><i class="fas fa-paper-plane"></i></button>
         </form>
         <!-- Separate form for file uploads -->
-         <form id="fileUploadForm" class="form-inline">
+        <form id="fileUploadForm" class="form-inline">
             <label for="fileUpload" class="btn btn-light">
                 <img src="static/attachment.png" alt="Attach file" class="file-icon">
                 <input type="file" id="fileUpload" style="display: none;" required>
             </label>
-            <button type="button" id="uploadFileBtn" class="btn btn-primary">Upload</button>
         </form>
         
         <button type="button" id="newThreadBtn" class="btn" aria-label="Start New Chat">New Chat</button>
@@ -252,7 +251,7 @@ $(document).ready(function() {
 
         // Append custom loading animation right after the user's message
         var loadingElementId = 'loadingMessage' + Date.now();  // Unique ID for each loading message
-        var loadingHtml = '<div id="' + loadingElementId + '" class="message bot-response"><img src="static/wait.gif" style="width:50px;height:50px;"> Please wait...</div>';
+        var loadingHtml = '<div id="' + loadingElementId + '" class="message bot-response"><img src="static/wait.gif" style="width:50px;height:50px;"> </div>';
         $('#chatWindow').append(loadingHtml);
 
         scrollToBottom();
@@ -283,46 +282,46 @@ $(document).ready(function() {
     }
         });
 
-        $('#uploadFileBtn').click(function() {
-    var fileData = $('#fileUpload').prop('files')[0];
-    if (!fileData) {
-        alert('Please select a file to upload.');
-        return;
-    }
+        $('#fileUpload').on('change', function() {
+        var fileData = $(this).prop('files')[0];
+        if (!fileData) {
+            alert('Please select a file to upload.');
+            return;
+        }
 
-    var fileName = fileData.name;
-    var predefinedMessage = `From the file "${fileName}", please extract information like Product Specifications, Submission Guidelines, Financial and Legal Compliance, Delivery and Packaging Instructions, and Critical Elements and Deadlines and also extract relevant important information`;
+        var fileName = fileData.name;
+        var predefinedMessage = `From the file "${fileName}", please extract information like Product Specifications, Submission Guidelines, Financial and Legal Compliance, Delivery and Packaging Instructions, and Critical Elements and Deadlines and also extract relevant important information`;
 
-    // Append file uploading message and animation to the chat window
-    var loadingElementId = 'loadingMessage' + Date.now();
-    var fileLoadingHtml = '<div id="' + loadingElementId + '" class="message bot-response"><img src="static/upload.gif" style="width:50px;height:50px;"> File Uploading...</div>';
-    $('#chatWindow').append(fileLoadingHtml);
+        // Append file uploading message and animation to the chat window
+        var loadingElementId = 'loadingMessage' + Date.now();
+        var fileLoadingHtml = '<div id="' + loadingElementId + '" class="message bot-response"><img src="static/upload.gif" style="width:50px;height:50px;"> File Uploading...</div>';
+        $('#chatWindow').append(fileLoadingHtml);
 
-    var formData = new FormData();
-    formData.append('file', fileData);
-    formData.append('message', predefinedMessage); // Automatically send the premessage when file is uploaded
-    formData.append('thread_id', $('#threadId').val());
+        var formData = new FormData();
+        formData.append('file', fileData);
+        formData.append('message', predefinedMessage); // Automatically send the premessage when file is uploaded
+        formData.append('thread_id', $('#threadId').val());
 
-    scrollToBottom();
+        scrollToBottom();
 
-    $.ajax({
-        type: 'POST',
-        url: '/',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            $('#' + loadingElementId).remove(); // Remove the file uploading message
-            $('#chatWindow').append(response.message);
-            $('#messageInput').val(''); // Clear input box
-            $('#threadId').val(response.thread_id);
-            scrollToBottom();
-        },
-        error: function(xhr, status, error) {
-            console.log("AJAX call failed. Status:", status, "Error:", error);
-            $('#' + loadingElementId).remove(); // Remove the file uploading message
-            $('#chatWindow').append('<div class="message bot-response">Failed to upload file.</div>');
-            scrollToBottom();
+        $.ajax({
+            type: 'POST',
+            url: '/',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                $('#' + loadingElementId).remove(); // Remove the file uploading message
+                $('#chatWindow').append(response.message);
+                $('#messageInput').val(''); // Clear input box
+                $('#threadId').val(response.thread_id);
+                scrollToBottom();
+            },
+            error: function(xhr, status, error) {
+                console.log("AJAX call failed. Status:", status, "Error:", error);
+                $('#' + loadingElementId).remove(); // Remove the file uploading message
+                $('#chatWindow').append('<div class="message bot-response">Failed to upload file.</div>');
+                scrollToBottom();
         }
                 });
             });
@@ -338,6 +337,3 @@ $(document).ready(function() {
     </script>
 </body>
 </html>
-
-
- 
