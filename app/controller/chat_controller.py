@@ -35,9 +35,9 @@ class ChatController:
                     run_ret = json.loads(run_ret.model_dump_json())
 
                 if run_ret['status'] == 'completed':
-                    user_msg, bot_resp = self.chat_model.get_messages(response['thread_id'])
-                    if not file_uploaded:
-                        response['user_message'] = user_msg
+                    bot_resp = self.chat_model.get_messages(response['thread_id'])
+                    # if not file_uploaded:
+                    #     response['user_message'] = user_msg
                     response['bot_response'] = bot_resp
                 else:
                     response['messages'].append("Error: Timeout or failed run.")

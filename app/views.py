@@ -2,6 +2,7 @@
 from flask import render_template, request, jsonify
 from .controller.chat_controller import ChatController
 import markdown
+# ALLOWED_EXTENSIONS = {'doc', 'docx', 'json', 'pdf', 'pptx', 'txt'}
 
 chat_controller = ChatController()
 
@@ -32,3 +33,8 @@ def init_app(app):
     def format_message_markdown(message):
         html = markdown.markdown(message, extensions=['fenced_code', 'tables'])
         return html
+
+    # def allowed_file(filename):
+    #     return '.' in filename and \
+    #         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+        
