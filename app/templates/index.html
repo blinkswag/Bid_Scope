@@ -6,6 +6,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    
     <script src="https://cdn.lordicon.com/lordicon.js"></script>
     <style>
         body, html {
@@ -14,36 +15,53 @@
             font-family: 'Arial', sans-serif;
             background: #f4f7f9; /* Light grey background */
         }
-        .chat-container {
-            max-width: 1500px; /* Adjust this value to increase or decrease the width */
-            margin: 50px 0 50px auto; /* Updated margin for right alignment */
-            height: 90vh;
-            display: flex;
-            flex-direction: column;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        .main-container {
+    display: flex; /* Enables flexbox layout */
+    align-items: start; /* Aligns children at the start of the container vertically */
+    justify-content: space-between; /* Spreads children across the horizontal space */
+    padding: 20px; /* Adds some padding around the containers */
+}
+
+.new-chat-container {
+            text-align: left; /* Aligns the button to the left */
+            padding-left: 10px; /* Gives some space from the left edge of the page */
+            margin-bottom: 10px; /* Distance between the button and the chat container */
+            margin-top: 5px; /* Moves the button down by 100 pixels */
         }
-        #chatWindow {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 10px;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-            object-fit: cover;
-        }
-        .avatar {
-            width: 30px;   
-            height: 30px;
-            border-radius: 50%; 
-            margin-right: 10px; 
-            vertical-align: middle; 
-                }
+
+    .chat-container {
+        flex: 3; /* Allows the container to take more space than the new chat container */
+        height: 95vh; /* Existing styles */
+        max-width: 1600px; /* Limit maximum width */
+        display: flex;
+        flex-direction: column;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 25px rgba(0,0,0,0.1);
+        padding-right: 10px;
+        margin-right: 20px;
+    }
+
+    #chatWindow {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 10px;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        object-fit: cover;
+    }
+    .avatar {
+        width: 30px;   
+        height: 30px;
+        border-radius: 50%; 
+        margin-right: 10px; 
+        vertical-align: middle; 
+            }
 
     .message {
             padding: 10px 15px;
             border-radius: 20px;
-            margin-bottom: 10px;
+            margin-bottom: 0px;
             max-width: 80%;
             word-wrap: break-word;
         }
@@ -62,7 +80,9 @@
             border-radius: 20px 20px 20px 0;
         }
         .input-group {
-            padding: 10px;
+            display: flex;
+            align-items: center; /* Ensures vertical alignment among items */
+            /* gap: 100px; Adds space between elements */
         }
         input[type="text"] {
             flex: 1;
@@ -96,7 +116,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 5px; /* Space between icon and text */
+    gap: 2px; /* Space between icon and text */
     cursor: pointer;
 }
 
@@ -117,14 +137,23 @@ input[type="file"] {
 }
 
 label[for="fileUpload"] {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+label[for="fileUpload"] {
     background: none; /* Removes any background styling */
     border: none; /* Removes border */
 }
 
         #newThreadBtn {
-            background-color: #6c757d; /* Bootstrap's default grey */
+            background-color: #018df9; /* Bootstrap's default grey */
             color: white; /* Ensuring text is visible on grey background */
             border: none; /* Optional: Removes any default border */
+            width: 360px; /* Set the width of the button */
+            height: 50px;
+            border-radius: 15px;
         }
 
         #newThreadBtn:hover {
@@ -182,7 +211,11 @@ label[for="fileUpload"] {
             width: auto; /* Maintain aspect ratio */
             transition: transform 0.2s; /* Smooth transform on hover */
         }
-
+        .send-button {
+            height: 55px; /* Set the height of the button */
+            align-items: center; /* Center the icon vertically inside the button */
+            padding: 0 20px; /* Adjust padding for better visual appearance */
+        }
         .file-icon:hover {
             transform: scale(1.1); /* Slightly enlarge the icon on hover */
         }
@@ -205,7 +238,11 @@ label[for="fileUpload"] {
 <!-- <title>Chatbot</title>  -->
 </head>
 <body>
-    <div class="chat-container">
+    <div class="main-container">
+        <div class="new-chat-container">
+            <button type="button" id="newThreadBtn" class="btn" aria-label="Start New Chat">New Chat</button>
+        </div>
+        <div class="chat-container">
         <!-- <h2 class="text-center">Chatbot</h2> -->
         <div id="chatWindow" class="d-flex flex-column">
             <div id="loadingMessage" class="message bot-response" style="display: none;">
@@ -213,19 +250,27 @@ label[for="fileUpload"] {
             </div>
         </div>
         <form id="chatForm" class="input-group">
+            <!-- File Upload Button -->
+            <label for="fileUpload" class="btn btn-light">
+                <img src="static/attachment.png" alt="Attach file" class="file-icon">
+                <input type="file" id="fileUpload" style="display: none;">
+            </label>
+            <!-- Hidden Thread ID Input -->
             <input type="hidden" id="threadId" name="thread_id">
+            <!-- Message Input Field -->
             <input type="text" id="messageInput" class="form-control" placeholder="Type your message here..." required>
-            <button class="btn btn-primary" type="submit" aria-label="Send"><i class="fas fa-paper-plane"></i></button>
+            <!-- Send Message Button -->
+            <button class="btn btn-primary send-button" type="submit" aria-label="Send"><i class="fas fa-paper-plane"></i></button>
         </form>
         <!-- Separate form for file uploads -->
-        <form id="fileUploadForm" class="form-inline">
+        <!-- <form id="fileUploadForm" class="form-inline">
             <label for="fileUpload" class="btn btn-light">
                 <img src="static/attachment.png" alt="Attach file" class="file-icon">
                 <input type="file" id="fileUpload" style="display: none;" required>
             </label>
-        </form>
+        </form> -->
         
-        <button type="button" id="newThreadBtn" class="btn" aria-label="Start New Chat">New Chat</button>
+        <!-- <button type="button" id="newThreadBtn" class="btn" aria-label="Start New Chat">New Chat</button> -->
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
