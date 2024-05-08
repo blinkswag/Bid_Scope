@@ -23,12 +23,78 @@
 }
 
 .new-chat-container {
-            text-align: left; /* Aligns the button to the left */
-            padding-left: 10px; /* Gives some space from the left edge of the page */
-            margin-bottom: 10px; /* Distance between the button and the chat container */
-            margin-top: 5px; /* Moves the button down by 100 pixels */
-        }
+    display: flex;
+    flex-direction: column;  /* Stack buttons vertically */
+    align-items: flex-start; /* Align buttons to the left */
+    gap: 10px;               /* Space between buttons */
+}
 
+.button-48 {
+  appearance: none;
+  background-color: #ffffff;
+  border-width: 0;
+  box-sizing: border-box;
+  color: #000000;
+  cursor: pointer;
+  display: inline-block;
+  /* font-family: Montserrat; */
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1em;
+  margin: 0;
+  opacity: 1;
+  outline: 0;
+  padding: 1.5em 2.2em;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  text-rendering: geometricprecision;
+  text-transform: uppercase;
+  transition: opacity 300ms cubic-bezier(.694, 0, 0.335, 1),background-color 100ms cubic-bezier(.694, 0, 0.335, 1),color 100ms cubic-bezier(.694, 0, 0.335, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: baseline;
+  white-space: nowrap;
+  width: 300px; 
+    height: 70px;
+    border-radius: 50px;
+}
+
+.button-48:before {
+  animation: opacityFallbackOut .5s step-end forwards;
+  backface-visibility: hidden;
+  background-color: #ebebeb9b;
+  font-family: Clarkson,Helvetica,sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  clip-path: polygon(-1% 0, 0 0, -25% 100%, -1% 100%);
+  content: "";
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  transform: translateZ(0);
+  transition: clip-path .5s cubic-bezier(.165, 0.84, 0.44, 1), -webkit-clip-path .5s cubic-bezier(.165, 0.84, 0.44, 1);
+  width: 100%;
+  border-radius: 50px;
+  
+}
+
+.button-48:hover:before {
+  animation: opacityFallbackIn 0s step-start forwards;
+  clip-path: polygon(0 0, 101% 0, 101% 101%, 0 101%);
+}
+
+.button-48:after {
+  background-color: #FFFFFF;
+}
+
+.button-48 span {
+  z-index: 1;
+  position: relative;
+}
     .chat-container {
         flex: 3; /* Allows the container to take more space than the new chat container */
         height: 95vh; /* Existing styles */
@@ -98,11 +164,14 @@
             border-color: #007bff;
         }
         .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px; /* Creates a small space between the icon and text */
-    cursor: pointer;
+    width: 150px;           /* Ensure all buttons have the same width */
+    padding: 10px 20px;     /* Padding for button text */
+    font-size: 16px;        /* Font size similar to 'New Chat' button */
+    text-align: center;     /* Center text within each button */
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    cursor: pointer;        /* Cursor changes to pointer on hover */
 }
 .file-icon {
     height: 40px; /* Adjust this value to increase the size */
@@ -112,14 +181,6 @@
 
 .file-icon:hover {
     transform: scale(1.15); /* Slightly enlarges the icon on hover for interactivity */
-}
-
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 2px; /* Space between icon and text */
-    cursor: pointer;
 }
 
 #fileUploadForm {
@@ -144,29 +205,73 @@ label[for="fileUpload"] {
     cursor: pointer;
 }
 
+.button-21 {
+    width: 300px; 
+    height: 70px;
+  align-items: center;
+  appearance: none;
+  background-color: #0476f7;
+  background-image: linear-gradient(1deg, #4F58FD, #149BF3 99%);
+  background-size: calc(100% + 20px) calc(100% + 20px);
+  border-radius: 100px;
+  border-width: 0;
+  box-shadow: none;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: CircularStd,sans-serif;
+  font-size: 2rem;
+  /* height: auto; */
+  justify-content: center;
+  line-height: 1.5;
+  padding: 10px 20px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color .2s,background-position .2s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: top;
+  white-space: nowrap;
+  margin-right: 20px;
+}
+
+.button-21:active,
+.button-21:focus {
+  outline: none;
+}
+
+.button-21:hover {
+  background-position: -20px -20px;
+}
+
+.button-21:focus:not(:active) {
+  box-shadow: rgba(32, 38, 42, 0.25) 0 0 0 .125em;
+}
 label[for="fileUpload"] {
     background: none; /* Removes any background styling */
     border: none; /* Removes border */
 }
-        #newThreadBtn {
-            background-color: #018df9; /* Bootstrap's default grey */
-            color: white; /* Ensuring text is visible on grey background */
-            border: none; /* Optional: Removes any default border */
-            width: 360px; /* Set the width of the button */
-            height: 50px;
-            border-radius: 15px;
-            font-size: 20px;
-        }
-
-        #newThreadBtn:hover {
-            background-color: #5a6268; /* A slightly darker grey on hover */
-            color: #fff; /* Keeping text color consistent */
-        }
-
-
         .btn:hover {
-            background-color: #cbd5df;
-        }
+    background-color: #5a6268;  /* Darken button on hover for feedback */
+}
+.chat-btn {
+    background-color: #5a6268; 
+    color: white; 
+    border: none; 
+    width: 360px; 
+    height: 50px; /* Fixed height for all buttons */
+    border-radius: 15px; /* Rounded corners */
+    font-size: 20px; /* Larger font size for better readability */
+    margin-bottom: 0px; /* Space between buttons */
+    cursor: pointer; /* Cursor changes to pointer on hover */
+}
+
+.chat-btn:hover {
+    background-color: #018df9; /* Darker blue on hover for feedback */
+}
         .btn:active {
             background-color: #ffffff;
         }
@@ -242,7 +347,18 @@ label[for="fileUpload"] {
 <body>
     <div class="main-container">
         <div class="new-chat-container">
-            <button type="button" id="newThreadBtn" class="btn" aria-label="Start New Chat">New Chat</button>
+            <button type="button" class="button-21" aria-label="Start New Chat">New Chat</button>
+            <button type="button" class="button-48" aria-label="Additional Button 1">Thread 1</button>
+            <button type="button" class="button-48" aria-label="Additional Button 2">Thread 2</button>
+            <button type="button" class="button-48" aria-label="Additional Button 3">Thread 3</button>
+            <button type="button" class="button-48" aria-label="Additional Button 4">Thread 4</button>
+            <button type="button" class="button-48" aria-label="Additional Button 5">Thread 5</button>
+            <button type="button" class="button-48" aria-label="Additional Button 6">Thread 6</button>
+            <button type="button" class="button-48" aria-label="Additional Button 7">Thread 7</button>
+            <button type="button" class="button-48" aria-label="Additional Button 8">Thread 8</button>
+            <button type="button" class="button-48" aria-label="Additional Button 9">Thread 9</button>
+            <button type="button" class="button-48" aria-label="Additional Button 10">Thread 10</button>
+
         </div>
         <div class="chat-container">
         <!-- <h2 class="text-center">Chatbot</h2> -->
@@ -255,7 +371,7 @@ label[for="fileUpload"] {
             <!-- File Upload Button -->
             <label for="fileUpload" class="btn btn-light">
                 <img src="static/attachment.png" alt="Attach file" class="file-icon">
-                <input type="file" id="fileUpload" style="display: none;">
+                <input type="file" id="fileUpload" multiple style="display: none;">
             </label>
             <!-- Hidden Thread ID Input -->
             <input type="hidden" id="threadId" name="thread_id">
@@ -264,17 +380,7 @@ label[for="fileUpload"] {
             <!-- Send Message Button -->
             <button class="btn btn-primary send-button" type="submit" aria-label="Send"><i class="fas fa-paper-plane"></i></button>
         </form>
-        <!-- Separate form for file uploads -->
-        <!-- <form id="fileUploadForm" class="form-inline">
-            <label for="fileUpload" class="btn btn-light">
-                <img src="static/attachment.png" alt="Attach file" class="file-icon">
-                <input type="file" id="fileUpload" style="display: none;" required>
-            </label>
-        </form> -->
-        
-        <!-- <button type="button" id="newThreadBtn" class="btn" aria-label="Start New Chat">New Chat</button> -->
     </div>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -288,9 +394,6 @@ $(document).ready(function() {
 
         var formData = new FormData(this);
         formData.append('message', messageText);
-
-        // Append user message immediately to the chat window
-        // $('#chatWindow').append('<div class="message user-message">' + messageText + '</div>');
         $('#chatWindow').append('<div class="message user-message"><img src="static/User.png" class="avatar">' + messageText + '</div>');
 
         // Clear the message input field
@@ -337,7 +440,7 @@ $(document).ready(function() {
         }
 
         var fileName = fileData.name;
-        var predefinedMessage = `From the file "${fileName}", please extract information like Product Specifications, Submission Guidelines, Financial and Legal Compliance, Delivery and Packaging Instructions, and Critical Elements and Deadlines and also extract relevant important information`;
+        var predefinedMessage = `From the file "${fileName}", Scan the bid files for critical information essential for bidding, including predefined topics like product specifications, submission guidelines, financial and legal compliance, delivery and packaging, and critical elements and deadlines`;
 
         // Append file uploading message and animation to the chat window
         var loadingElementId = 'loadingMessage' + Date.now();
@@ -373,7 +476,7 @@ $(document).ready(function() {
                 });
             });
 
-            $('#newThreadBtn').click(function() {
+            $('.button-21').click(function() {
                 $('#threadId').val(''); // Reset the thread ID
                 $('#chatWindow').html(''); // Clear the chat window
             });
