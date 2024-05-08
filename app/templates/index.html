@@ -1,3 +1,4 @@
+<!-- #app/templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -127,7 +128,7 @@
     .message {
             padding: 10px 15px;
             border-radius: 20px;
-            margin-bottom: 0px;
+            margin-bottom: 10px;
             max-width: 80%;
             font-size: 16px; /* Adjust this value as needed */
 }
@@ -433,48 +434,58 @@ $(document).ready(function() {
         });
 
         $('#fileUpload').on('change', function() {
-        var fileData = $(this).prop('files')[0];
-        if (!fileData) {
-            alert('Please select a file to upload.');
-            return;
-        }
+            var files = $(this).prop('files');
+            if (files.length === 0) {
+                alert('Please select a file to upload.');
+                return;
+            }
 
-        var fileName = fileData.name;
-        var predefinedMessage = `From the file "${fileName}", Scan the bid files for critical information essential for bidding, including predefined topics like product specifications, submission guidelines, financial and legal compliance, delivery and packaging, and critical elements and deadlines`;
+            processFiles(0, files);  // Start processing from the first file
+        });
 
-        // Append file uploading message and animation to the chat window
-        var loadingElementId = 'loadingMessage' + Date.now();
-        var fileLoadingHtml = '<div id="' + loadingElementId + '" class="message bot-response"><img src="static/upload.gif" style="width:50px;height:50px;"> File Uploading...</div>';
-        $('#chatWindow').append(fileLoadingHtml);
+        function processFiles(index, files) {
+            if (index >= files.length) {
+                return;  // No more files to process
+            }
 
-        var formData = new FormData();
-        formData.append('file', fileData);
-        formData.append('message', predefinedMessage); // Automatically send the premessage when file is uploaded
-        formData.append('thread_id', $('#threadId').val());
+            var file = files[index];
+            var fileName = file.name;
+            var predefinedMessage = `From the file "${fileName}", Scan the bid files for critical information essential for bidding, topics like product specifications, submission guidelines, financial and legal compliance, delivery and packaging, and critical elements and deadlines and more and extracted details in an organized and structured manner, ensuring clarity and coherence. Extract information pertinent to bidding while avoiding repetition and maintaining a varied pattern of extraction. `;
 
-        scrollToBottom();
+            var formData = new FormData();
+            formData.append('file', file);
+            formData.append('message', predefinedMessage);
+            formData.append('thread_id', $('#threadId').val());
 
-        $.ajax({
-            type: 'POST',
-            url: '/',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                $('#' + loadingElementId).remove(); // Remove the file uploading message
-                $('#chatWindow').append(response.message);
-                $('#messageInput').val(''); // Clear input box
-                $('#threadId').val(response.thread_id);
-                scrollToBottom();
-            },
-            error: function(xhr, status, error) {
-                console.log("AJAX call failed. Status:", status, "Error:", error);
-                $('#' + loadingElementId).remove(); // Remove the file uploading message
-                $('#chatWindow').append('<div class="message bot-response">Failed to upload file.</div>');
-                scrollToBottom();
-        }
-                });
-            });
+            var loadingElementId = 'loadingMessage' + Date.now();
+            var fileLoadingHtml = '<div id="' + loadingElementId + '" class="message bot-response"><img src="static/upload.gif" style="width:50px;height:50px;"> File Uploading...</div>';
+            $('#chatWindow').append(fileLoadingHtml);
+
+            scrollToBottom();
+
+            $.ajax({
+                type: 'POST',
+                url: '/',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    $('#' + loadingElementId).remove();
+                    $('#chatWindow').append(response.message);
+                    $('#messageInput').val('');
+                    $('#threadId').val(response.thread_id);
+                    scrollToBottom();
+                    processFiles(index + 1, files);  // Process the next file
+                },
+                error: function(xhr, status, error) {
+                    console.log("AJAX call failed. Status:", status, "Error:", error);
+                    $('#' + loadingElementId).remove();
+                    $('#chatWindow').append('<div class="message bot-response">Failed to upload file.</div>');
+                    scrollToBottom();
+                    processFiles(index + 1, files);  // Process the next file even if the current one fails
+                }
+    });
+}
 
             $('.button-21').click(function() {
                 $('#threadId').val(''); // Reset the thread ID
