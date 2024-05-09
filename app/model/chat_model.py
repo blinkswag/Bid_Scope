@@ -3,6 +3,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import json
 from io import BytesIO
+import re
 
 load_dotenv()
 
@@ -65,14 +66,13 @@ class ChatModel:
         return run
 
     def get_messages(self, thread_id):
-      response = self.client.beta.threads.messages.list(
-          thread_id=thread_id
-      )
-      parsed_data = json.loads(response.model_dump_json())
-      content_values = [message['content'][0]['text']['value'] for message in parsed_data['data']]
-      content_values.reverse()
-    #   user=content_values[-2:][0]
-      bot =content_values[-2:][1]
-      return bot
+        response = self.client.beta.threads.messages.list(thread_id=thread_id)
+        parsed_data = json.loads(response.model_dump_json())
+        content_values = [message['content'][0]['text']['value'] for message in parsed_data['data']]
+        content_values.reverse()
+        return content_values[-2:][1]
+
+    
+
 
 

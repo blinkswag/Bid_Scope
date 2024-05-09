@@ -1,8 +1,14 @@
 from flask import render_template, request, jsonify
 from .controller.chat_controller import ChatController
 import markdown
+import re  # Import the regular expressions library
 
 chat_controller = ChatController()
+
+def remove_bracketed_content(text):
+    pattern = r"【[^】]*】"
+    cleaned_text = re.sub(pattern, '', text)
+    return cleaned_text
 
 def init_app(app):
     @app.route('/', methods=['GET', 'POST'])
@@ -21,8 +27,13 @@ def init_app(app):
                 if response['user_message']:
                     formatted_response += f'<div class="message user-message">{format_message_markdown(response["user_message"])}</div>'
 
+                # if response['bot_response']:
+                #     formatted_response += f'<div class="message bot-response">{format_message_markdown(response["bot_response"])}</div>'
+
                 if response['bot_response']:
-                    formatted_response += f'<div class="message bot-response">{format_message_markdown(response["bot_response"])}</div>'
+                    cleaned_bot_response = remove_bracketed_content(response['bot_response'])
+                    formatted_response += f'<div class="message bot-response">{format_message_markdown(cleaned_bot_response)}</div>'
+
             return jsonify({
                 'message': formatted_response,
                 'thread_id': response['thread_id']
