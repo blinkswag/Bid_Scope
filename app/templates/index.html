@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
     
     <script src="https://cdn.lordicon.com/lordicon.js"></script>
     <style>
@@ -135,8 +136,8 @@
 }
         .user-message {
             /* background-color: #007bff; */
-            background-color: #a370f0;
-            color: white;
+            background-color: #fcc404;
+            color: black;
             margin-left: auto;
             /* color: #ffffff; */
             align-self: flex-end;  
@@ -210,7 +211,7 @@ label[for="fileUpload"] {
 .cssbuttons-io-button {
     width: 300px; 
     height: 80px;
-  background: #a370f0;
+  background: #f9b904;
   color: white;
   font-family: inherit;
   /* padding: 0.35em; */
@@ -222,7 +223,7 @@ label[for="fileUpload"] {
   letter-spacing: 0.05em;
   display: flex;
   align-items: center;
-  box-shadow: inset 0 0 1.6em -0.6em #714da6;
+  /* box-shadow: inset 0 0 1.6em -0.6em #595400; */
   overflow: hidden;
   position: relative;
   /* height: 2.8em; */
@@ -242,7 +243,7 @@ label[for="fileUpload"] {
   width: 60px; 
     height: 60px;
   border-radius: 0.7em;
-  box-shadow: 0.1em 0.1em 0.6em 0.2em #7b52b9;
+  /* box-shadow: 0.1em 0.1em 0.6em 0.2em #ffffff; */
   right: 0.3em;
   transition: all 0.3s;
 }
@@ -254,7 +255,7 @@ label[for="fileUpload"] {
 .cssbuttons-io-button .icon svg {
   width: 1.1em;
   transition: transform 0.3s;
-  color: #7b52b9;
+  color: #f9b904;
 }
 
 .cssbuttons-io-button:hover .icon svg {
@@ -273,7 +274,7 @@ label[for="fileUpload"] {
     background-color: #5a6268;  /* Darken button on hover for feedback */
 }
 .chat-btn {
-    background-color: #5a6268; 
+    /* background-color: #5a6268;  */
     color: white; 
     border: none; 
     width: 360px; 
@@ -337,6 +338,7 @@ label[for="fileUpload"] {
             height: 55px; /* Set the height of the button */
             align-items: center; /* Center the icon vertically inside the button */
             padding: 0 20px; /* Adjust padding for better visual appearance */
+            color:#ffffff
         }
         .file-icon:hover {
             transform: scale(1.1); /* Slightly enlarge the icon on hover */
@@ -391,7 +393,7 @@ label[for="fileUpload"] {
 
 .button-28:hover {
   color: #fff;
-  background-color: #a370f0;
+  background-color: #f9b904;
   box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
   transform: translateY(-2px);
 }
@@ -400,6 +402,109 @@ label[for="fileUpload"] {
   box-shadow: none;
   transform: translateY(0);
 }
+.button {
+  display: block;
+  background-color: #c0392b;
+  width: 200px; /* Reduced from 300px */
+  height: 60px;  /* Reduced from 100px */
+  line-height: 60px; /* Reduced to match height */
+  margin: auto;
+  color: #fff;
+  position: relative; /* Centering might need adjustments depending on its new context */
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 5px;
+  box-shadow: 0 0 20px 0 rgba(0,0,0,.3);
+  transition: all 0.25s cubic-bezier(0.310, -0.105, 0.430, 1.400);
+  margin-top: 220%;
+}
+
+.button span {
+  width: 72%; /* Adjust if needed */
+  line-height: inherit;
+  font-size: 16px; /* Reduced from 22px */
+  text-transform: uppercase;
+  left: 0;
+  transition: all 0.25s cubic-bezier(0.310, -0.105, 0.430, 1.400);
+}
+        .button .icon {
+            display: block;
+            height: 100%;
+            text-align: center;
+            position: center;
+            top: 0;
+        }
+
+        .button span:after {
+  content: '';
+  background-color: #a53125;
+  width: 2px;
+  height: 50%; /* Adjust proportionally */
+  position: absolute;
+  top: 25%; /* Adjust to center */
+  right: -1px;
+}
+
+.button .icon {
+  width: 28%; /* Maintain proportion */
+  right: 0;
+  transition: all 0.25s cubic-bezier(0.310, -0.105, 0.430, 1.400);
+}
+
+        .button .icon .fa {
+            font-size: 30px;
+            vertical-align: center;
+            transition: all 0.25s cubic-bezier(0.310, -0.105, 0.430, 1.400), height 0.25s ease;
+        }
+
+        .button .icon .fa {
+  font-size: 20px; /* Adjusted from 30px */
+  vertical-align: middle;
+  transition: all 0.25s ease;
+}
+
+        /* .button .icon .fa-check {
+            /* display: none; */
+       
+
+        .button:hover {
+            opacity: .9;
+        }
+
+        .button:hover .icon .fa-remove {
+            height: 46px;
+        }
+
+        .button:active {
+            opacity: 1;
+        }
+
+        .button.success,
+        .button:hover {
+            span {
+                left: -72%;
+                opacity: 0;
+            }
+
+            .icon {
+                width: 100%;
+
+                .fa {
+                    font-size: 45px;
+                }
+            }
+        }
+
+        .button.success {
+            background-color: #000000;
+        }
+            .icon .fa-remove {
+                display: none;
+            }
+
+            .icon .fa-check {
+                display: inline-block;
+            }
 
     </style>
     
@@ -430,7 +535,7 @@ label[for="fileUpload"] {
                 </div>
               </button>
               
-            <button type="button" class="button-28" style="font-weight: bold;" aria-label="Additional Button 1">Thread 1</button>
+            <!-- <button type="button" class="button-28" style="font-weight: bold;" aria-label="Additional Button 1">Thread 1</button>
             <button type="button" class="button-28" style="font-weight: bold;" aria-label="Additional Button 2">Thread 2</button>
             <button type="button" class="button-28" style="font-weight: bold;" aria-label="Additional Button 3">Thread 3</button>
             <button type="button" class="button-28" style="font-weight: bold;" aria-label="Additional Button 4">Thread 4</button>
@@ -439,7 +544,15 @@ label[for="fileUpload"] {
             <button type="button" class="button-28" style="font-weight: bold;" aria-label="Additional Button 7">Thread 7</button>
             <button type="button" class="button-28" style="font-weight: bold;" aria-label="Additional Button 8">Thread 8</button>
             <button type="button" class="button-28" style="font-weight: bold;" aria-label="Additional Button 9">Thread 9</button>
-            <button type="button" class="button-28" style="font-weight: bold;" aria-label="Additional Button 10">Thread 10</button>
+            <button type="button" class="button-28" style="font-weight: bold;" aria-label="Additional Button 10">Thread 10</button> -->
+            <button class="button" role="button">
+                <span>Logout</span>
+                <div class="icon">
+                    <i class="fa fa-remove"></i>
+                    <i class="fa fa-check" style="display: none;"></i>
+                </div>
+            </button>
+              
 
         </div>
         <div class="chat-container">
@@ -466,7 +579,31 @@ label[for="fileUpload"] {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+function logout() {
+    console.log("Logging out...");
+    localStorage.removeItem('logged_in');
+    localStorage.removeItem('email');
+    window.location.href = '/login'; // Redirect to the login page
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var logoutButton = document.querySelector('.button');
+    logoutButton.addEventListener('click', function() {
+        this.classList.add('success');
+        setTimeout(function() {
+            logoutButton.classList.remove('success');
+            logout(); // Call logout function after the animation
+        }, 1000);
+    });
+});
 $(document).ready(function() {
+    // Ensure user is logged in
+    if (!localStorage.getItem('logged_in')) {
+        window.location.href = '/login'; // Redirect to login if not logged in
+    }
+
+
+    // });
     $('#chatForm').submit(function(event) {
         event.preventDefault();
         var messageText = $('#messageInput').val();
