@@ -15,13 +15,14 @@
             height: 100%;
             margin: 0;
             font-family: 'Arial', sans-serif;
-            background: #f4f7f9; /* Light grey background */
+            background: #141414; /* Light grey background */
         }
         .main-container {
     display: flex; /* Enables flexbox layout */
     align-items: start; /* Aligns children at the start of the container vertically */
     justify-content: space-between; /* Spreads children across the horizontal space */
     padding: 20px; /* Adds some padding around the containers */
+
 }
 
 .new-chat-container {
@@ -101,7 +102,7 @@
     .chat-container {
         flex: 3; /* Allows the container to take more space than the new chat container */
         height: 95vh; /* Existing styles */
-        max-width: 1600px; /* Limit maximum width */
+        max-width: 1050px; /* Limit maximum width */
         display: flex;
         flex-direction: column;
         background: white;
@@ -132,7 +133,7 @@
             border-radius: 20px;
             margin-bottom: 10px;
             max-width: 80%;
-            font-size: 16px; /* Adjust this value as needed */
+            font-size: 14px; /* Adjust this value as needed */
 }
         .user-message {
             /* background-color: #007bff; */
@@ -141,14 +142,14 @@
             margin-left: auto;
             /* color: #ffffff; */
             align-self: flex-end;  
-            font-size: 25px;
+            font-size: 15px;
         }
         .bot-response {
             background-color: #e9ecef;
             color: #333;
             align-self: flex-start;  
             border-radius: 20px 20px 20px 0;
-            font-size: 25px;
+            font-size: 15px;
         }
         .input-group {
             display: flex;
@@ -157,18 +158,18 @@
         }
         input[type="text"] {
             flex: 1;
-            padding: 10px;
+            padding: 7px;
             border: 2px solid #dee2e6; /* Fallback for browsers that don't support :focus-visible */
             border-radius: 8px;
-            margin-right: 8px;
+            margin-right: 10px;
         }
         input[type="text"]:focus-visible {
             outline: none;
-            border-color: #007bff;
+            border-color: #050505;
         }
         .btn {
-    width: 150px;           /* Ensure all buttons have the same width */
-    padding: 10px 20px;     /* Padding for button text */
+    width: 80px;           /* Ensure all buttons have the same width */
+    padding: 5px 10px;     /* Padding for button text */
     font-size: 16px;        /* Font size similar to 'New Chat' button */
     text-align: center;     /* Center text within each button */
     background-color: #6c757d;
@@ -177,13 +178,13 @@
     cursor: pointer;        /* Cursor changes to pointer on hover */
 }
 .file-icon {
-    height: 40px; /* Adjust this value to increase the size */
+    height: 20px; /* Adjust this value to increase the size */
     width: auto; /* This will maintain the aspect ratio of the image */
     cursor: pointer; /* Indicates that the icon is clickable */
 }
 
 .file-icon:hover {
-    transform: scale(1.15); /* Slightly enlarges the icon on hover for interactivity */
+    transform: scale(1.5); /* Slightly enlarges the icon on hover for interactivity */
 }
 
 #fileUploadForm {
@@ -209,39 +210,39 @@ label[for="fileUpload"] {
 }
 
 .cssbuttons-io-button {
-    width: 300px; 
-    height: 80px;
+    width: 150px; 
+    height: 50px;
   background: #f9b904;
-  color: white;
+  color: 141414;
   font-family: inherit;
   /* padding: 0.35em; */
   /* padding-left: 1.2em; */
-  font-size: 18px;
-  font-weight: 1000;
+  font-size: 15px;
+  font-weight: 500;
   border-radius: 0.9em;
-  border: none;
+  border:#fff;
   letter-spacing: 0.05em;
   display: flex;
-  align-items: center;
+  align-items:center;
   /* box-shadow: inset 0 0 1.6em -0.6em #595400; */
   overflow: hidden;
   position: relative;
   /* height: 2.8em; */
   /* padding-right: 3.3em; */
   cursor: pointer;
-  margin-left: 20px;
-  justify-content: center;
+  margin-left: 10px;
+  justify-content: left;
 }
 
 .cssbuttons-io-button .icon {
-  background: white;
+  background: #141414;
   /* margin-left: 1em; */
   position: absolute;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 60px; 
-    height: 60px;
+  width: 40px; 
+    height: 40px;
   border-radius: 0.7em;
   /* box-shadow: 0.1em 0.1em 0.6em 0.2em #ffffff; */
   right: 0.3em;
@@ -286,7 +287,7 @@ label[for="fileUpload"] {
 }
 
 .chat-btn:hover {
-    background-color: #018df9; /* Darker blue on hover for feedback */
+    background-color: #ffffff; /* Darker blue on hover for feedback */
 }
         .btn:active {
             background-color: #ffffff;
@@ -295,7 +296,7 @@ label[for="fileUpload"] {
             font-size: 1.2rem; /* Larger icons */
         }
         .fas.fa-spinner {
-            color: #007bff; /* Primary color spinner */
+            color: #000000; /* Primary color spinner */
             font-size: 24px; /* Larger spinner icon */
             animation: spin 1s linear infinite;
         }
@@ -330,12 +331,12 @@ label[for="fileUpload"] {
         }
         .file-icon {
             cursor: pointer; /* Makes the icon appear clickable */
-            height: 60px; /* Adjust size as needed */
+            height: 50px; /* Adjust size as needed */
             width: auto; /* Maintain aspect ratio */
             transition: transform 0.2s; /* Smooth transform on hover */
         }
         .send-button {
-            height: 55px; /* Set the height of the button */
+            height: 43px; /* Set the height of the button */
             align-items: center; /* Center the icon vertically inside the button */
             padding: 0 20px; /* Adjust padding for better visual appearance */
             color:#ffffff
@@ -370,10 +371,10 @@ label[for="fileUpload"] {
   font-weight: 900;
   line-height: normal;
   margin: 0;
-  min-height: 60px;
+  min-height: 40px;
   min-width: 0;
   outline: none;
-  padding: 8px 12px;
+  padding: 6px 9px;
   text-align: center;
   text-decoration: none;
   transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
@@ -405,18 +406,19 @@ label[for="fileUpload"] {
 .button {
   display: block;
   background-color: #c0392b;
-  width: 200px; /* Reduced from 300px */
-  height: 60px;  /* Reduced from 100px */
-  line-height: 60px; /* Reduced to match height */
-  margin: auto;
+  width: 120px; 
+    height: 40px;
+  /* line-height: 60px; Reduced to match height */
+  /* margin: auto; */
   color: #fff;
-  position: relative; /* Centering might need adjustments depending on its new context */
+  position: center; /* Centering might need adjustments depending on its new context */
   cursor: pointer;
   overflow: hidden;
   border-radius: 5px;
   box-shadow: 0 0 20px 0 rgba(0,0,0,.3);
   transition: all 0.25s cubic-bezier(0.310, -0.105, 0.430, 1.400);
-  margin-top: 220%;
+  margin-top: 300%;
+  text-align: center;
 }
 
 .button span {
