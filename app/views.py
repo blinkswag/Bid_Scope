@@ -2,14 +2,17 @@ from flask import render_template, request, jsonify, redirect, url_for, session
 from .controller.chat_controller import ChatController
 import markdown
 import re  # Import the regular expressions library
+import os
+import json
+from dotenv import load_dotenv
+
+
 
 chat_controller = ChatController()
 
-users = {
-    '0': {"Email": 'shahrukh@blinkswag.com', 'Password': 'basecamp@123','role':'Admin'},
-    '1': {"Email": 'shahrukh.aleem@basecampdata.com', 'Password': 'Test@123','role':'User'},
-    '2': {"Email": 'Alee@blinkswag.com', 'Password': 'blink@123','role':'Admin'},
-}
+users={"0": {"Email": "shahrukh@blinkswag.com", "Password": "basecamp@123", "role": "Admin"},
+       "1": {"Email": "shahrukh.aleem@basecampdata.com", "Password": "Test@123", "role": "User"},
+       "2": {"Email": "Alee@blinkswag.com", "Password": "blink@123", "role": "Admin"}}
 
 def check_user_credentials(email, password):
     for user_id, details in users.items():
