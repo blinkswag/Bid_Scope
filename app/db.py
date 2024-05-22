@@ -11,7 +11,7 @@ class Database:
     def __init__(self):
         user = os.getenv('db_user')
         password = os.getenv('db_pass')
-        connection_string = f'mongodb+srv://{user}:{password}@bidbot.eqofazi.mongodb.net/?retryWrites=true&w=majority&appName=BidBot'
+        connection_string = f'mongodb+srv://{user}:{password}@bidbot.eqofazi.mongodb.net/?retryWrites=true&w=majority&tls=true&tlsAllowInvalidCertificates=true'
 
         client = pymongo.MongoClient(connection_string)
 
