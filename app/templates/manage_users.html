@@ -1,0 +1,219 @@
+<!-- app/templates/manage_users.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <title>Manage Users</title>
+    <style>
+        body {
+            padding: 20px;
+            background-color: #000000; /* Light grey background */
+            color: white;
+        }
+        .container {
+            background: #141414;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #fcc404;
+        }
+        h1, h2, h3 {
+            margin-bottom: 30px;
+        }
+        table {
+            background-color: #141414; /* Set table background color */
+            color: white; /* Set font color inside table */
+        }
+        .table td, .table th {
+            color: white; /* Set font color inside table cells */
+        }
+        th {
+            background-color: #141414; /* Set headings background color */
+            color: #fcc404; /* Set headings color */
+        }
+        td, th {
+            border: none; /* Remove border */
+        }
+        form {
+            margin-top: 20px;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.3s;
+            width: 15%;
+        }
+        .btn-secondary i {
+            margin-right: 5px;
+        }
+        .btn-secondary:hover {
+            background-color: #fcc404;
+            transform: scale(1.05);
+        }
+        .btn-primary {
+            background-color: #6c757d;
+            border: none;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #fcc404;
+            transform: scale(1.05);
+        }
+        .edit-form {
+            display: none;
+            margin-top: 10px;
+        }
+        .alert {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+        <h2>Manage Users</h2>
+        {% if error_messages %}
+            {% for message in error_messages %}
+                <div class="alert alert-danger">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.Username }}</td>
+                    <td>{{ user.Email }}</td>
+                    <td>{{ user.role }}</td>
+                    <td>
+                        {% if role == 'Super Admin' or (role == 'Admin' and user.role == 'User') %}
+                            <button class="btn btn-primary btn-sm edit-btn" data-id="{{ user._id }}">Edit</button>
+                            <form action="/delete-user/{{ user._id }}" method="POST" style="display:inline;" onsubmit="return confirmDelete()">
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        {% else %}
+                            <button class="btn btn-primary btn-sm" disabled>Edit</button>
+                            <button class="btn btn-danger btn-sm" disabled>Delete</button>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr class="edit-form" id="edit-form-{{ user._id }}">
+                    <td colspan="4">
+                        <form action="/edit-user/{{ user._id }}" method="POST" class="row g-3" onsubmit="return validatePassword('{{ user._id }}')">
+                            <div class="col-md-2">
+                                <label for="username-{{ user._id }}" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username-{{ user._id }}" name="username" value="{{ user.Username }}" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="email-{{ user._id }}" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email-{{ user._id }}" name="email" value="{{ user.Email }}" required>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="role-{{ user._id }}" class="form-label">Role</label>
+                                <select class="form-select" id="role-{{ user._id }}" name="role" required>
+                                    <option value="Super Admin" {% if user.role == 'Super Admin' %}selected{% endif %}>Super Admin</option>
+                                    <option value="Admin" {% if user.role == 'Admin' %}selected{% endif %}>Admin</option>
+                                    <option value="User" {% if user.role == 'User' %}selected{% endif %}>User</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="password-{{ user._id }}" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password-{{ user._id }}" name="password">
+                                <small id="passwordHelp" class="form-text text-muted">Password must be at least 8 characters long and include both letters and numbers.</small>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>Add New User</h3>
+        <form action="/add-user" method="POST" class="row g-3" onsubmit="return validatePassword('new')">
+            <div class="col-md-2">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+            <div class="col-md-4">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="col-md-4">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password-new" name="password" required>
+                <small id="passwordHelp" class="form-text text-muted">Password must be at least 8 characters long and include both letters and numbers.</small>
+            </div>
+            <div class="col-md-2">
+                <label for="role" class="form-label">Role</label>
+                <select class="form-select" id="role" name="role" required>
+                    <option value="">Select Role</option>
+                    <option value="Admin" {% if role == 'Admin' %}selected{% endif %}>Admin</option>
+                    <option value="User" {% if role == 'User' %}selected{% endif %}>User</option>
+                    {% if role == 'Super Admin' %}
+                        <option value="Super Admin">Super Admin</option>
+                    {% endif %}
+                </select>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Add User</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function confirmDelete() {
+            return confirm('Are you sure you want to delete this user?');
+        }
+
+        function validatePassword(id) {
+            var password = document.getElementById('password-' + id).value;
+            if (password) {
+                var re = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
+                if (!re.test(password)) {
+                    alert('Password must be at least 8 characters long and include both letters and numbers.');
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const editButtons = document.querySelectorAll('.edit-btn');
+            editButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const userId = this.getAttribute('data-id');
+                    const editForm = document.getElementById('edit-form-' + userId);
+                    if (editForm.style.display === 'none' || editForm.style.display === '') {
+                        editForm.style.display = 'table-row';
+                    } else {
+                        editForm.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

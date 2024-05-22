@@ -3,10 +3,8 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import json
 from io import BytesIO
-import re
 
 load_dotenv()
-
 class ChatModel:
     def __init__(self):
         self.api_key = os.getenv('API_KEY')
@@ -17,11 +15,10 @@ class ChatModel:
     def upload_file(self, file_storage):
         try:
             file_bytes = file_storage.read()
-            file_storage.seek(0)  
+            file_storage.seek(0)
             file_like_object = BytesIO(file_bytes)
             file_like_object.name = file_storage.filename
             pdf = self.client.files.create(file=file_like_object, purpose="assistants")
-            # print(pdf.id)
             file_status = self.client.beta.vector_stores.files.create_and_poll(vector_store_id=self.vector_store_id, file_id=pdf.id).status
             self.client.beta.assistants.update(
                 assistant_id=self.assistant_id,
@@ -31,7 +28,6 @@ class ChatModel:
         except Exception as e:
             print(f"Failed to upload file: {e}")
             return str(e)
-            
 
     def create_thread(self):
         thread = self.client.beta.threads.create(
@@ -49,19 +45,18 @@ class ChatModel:
             role="user",
             content=message
         )
-    
 
     def create_run(self, thread_id):
-      run = self.client.beta.threads.runs.create(
-          thread_id=thread_id,
-          assistant_id=self.assistant_id,
-      )
-      return run
-    
-    def retrieve_run(self, thread_id,run_id):
+        run = self.client.beta.threads.runs.create(
+            thread_id=thread_id,
+            assistant_id=self.assistant_id,
+        )
+        return run
+
+    def retrieve_run(self, thread_id, run_id):
         run = self.client.beta.threads.runs.retrieve(
-          thread_id=thread_id,
-          run_id=run_id
+            thread_id=thread_id,
+            run_id=run_id
         )
         return run
 
@@ -72,7 +67,7 @@ class ChatModel:
         content_values.reverse()
         return content_values[-2:][1]
 
-    
-
-
-
+    def get_threads_messages(self, thread_id):
+        response = self.client.beta.threads.messages.list(thread_id=thread_id)
+        parsed_data = json.loads(response.model_dump_json())
+        return parsed_data['data']
