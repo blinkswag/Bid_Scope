@@ -9,14 +9,11 @@ load_dotenv()
 
 class Database:
     def __init__(self):
-        user = os.getenv('db_user')
-        password = os.getenv('db_pass')
-        connection_string = f'mongodb+srv://shahrukh:blinkswag@bidbot.eqofazi.mongodb.net/?retryWrites=true&w=majority&tls=true&tlsInsecure=true'
+        connection_string= os.getenv('mongo_srv')
         client = pymongo.MongoClient(connection_string, tlsCAFile=certifi.where())
-        # client = pymongo.MongoClient(connection_string)
 
         try:
-            client.server_info()  # Check if connection is successful
+            client.server_info()  
             self.db = client.Bid
             self.users_collection = self.db.Users
             self.threads_collection = self.db.Threads
