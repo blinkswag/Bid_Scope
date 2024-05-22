@@ -5,14 +5,13 @@ import bcrypt
 from dotenv import load_dotenv
 import os
 from .validation import validate_password
-from pymongo.mongo_client import MongoClient
 load_dotenv()
 
 class Database:
     def __init__(self):
         user = os.getenv('db_user')
         password = os.getenv('db_pass')
-        connection_string = f'mongodb+srv://{user}:{password}@bidbot.eqofazi.mongodb.net/?retryWrites=true&w=majority&appName=BidBot'
+        connection_string = f'mongodb://{user}:{password}@bidbot.eqofazi.mongodb.net/?retryWrites=true&w=majority&tls=true&tlsInsecure=true'
         client = pymongo.MongoClient(connection_string, tlsCAFile=certifi.where())
         # client = pymongo.MongoClient(connection_string)
 
