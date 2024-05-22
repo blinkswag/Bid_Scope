@@ -1,3 +1,4 @@
+import certifi
 import pymongo
 from bson import ObjectId
 import bcrypt
@@ -12,8 +13,8 @@ class Database:
         user = os.getenv('db_user')
         password = os.getenv('db_pass')
         connection_string = f'mongodb+srv://{user}:{password}@bidbot.eqofazi.mongodb.net/?retryWrites=true&w=majority&tls=true&tlsAllowInvalidCertificates=true'
-
-        client = pymongo.MongoClient(connection_string)
+        client = pymongo.MongoClient(connection_string, tlsCAFile=certifi.where())
+        # client = pymongo.MongoClient(connection_string)
 
         try:
             client.server_info()  # Check if connection is successful
