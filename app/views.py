@@ -16,12 +16,12 @@ def init_app(app):
         if user_email is None:
             g.user = None
         else:
-            g.user = db.users_collection.find_one({"Email": user_email})
+            g.user = db.users_collection.find_one({"Email": user_email.lower()})
 
     @app.route('/login', methods=['GET', 'POST'])
     def login():
         if request.method == 'POST':
-            email = request.form['username']
+            email = request.form['username'].lower()
             password = request.form['password']
             if not email or not password:
                 return jsonify({'success': False, 'error': 'Email and password are required'}), 400
