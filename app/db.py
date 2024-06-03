@@ -1,19 +1,19 @@
+import certifi
 import pymongo
 from bson import ObjectId
 import bcrypt
 from dotenv import load_dotenv
 import os
 from .validation import validate_password
-
 load_dotenv()
 
 class Database:
     def __init__(self):
         user = os.getenv('db_user')
         password = os.getenv('db_pass')
-        connection_string = f'mongodb+srv://{user}:{password}@bidbot.eqofazi.mongodb.net/?retryWrites=true&w=majority&appName=BidBot'
-
-        client = pymongo.MongoClient(connection_string)
+        connection_string = f'mongodb+srv://{user}:{password}@bidbot.eqofazi.mongodb.net/?retryWrites=true&w=majority&tls=true&tlsInsecure=true'
+        client = pymongo.MongoClient(connection_string, tlsCAFile=certifi.where())
+        # client = pymongo.MongoClient(connection_string)
 
         try:
             client.server_info()  # Check if connection is successful
