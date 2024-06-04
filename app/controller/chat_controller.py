@@ -1,3 +1,4 @@
+# app/controller/chat_controller.py
 from app.model.chat_model import ChatModel
 import json
 import time
@@ -53,7 +54,8 @@ class ChatController:
                 if run_ret['status'] == 'completed':
                     bot_resp = self.chat_model.get_messages(response['thread_id'])
 
-                    response['bot_response'] = bot_resp
+                    cleaned_bot_response = remove_bracketed_content(bot_resp)
+                    response['bot_response'] = cleaned_bot_response
                 else:
                     response['messages'].append("Error: Timeout or failed run.")
 

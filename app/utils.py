@@ -1,3 +1,4 @@
+# app/utils.py
 import re
 from flask import redirect, url_for, session
 from functools import wraps
@@ -18,7 +19,7 @@ def validate_file(file):
     return True, ''
 
 def remove_bracketed_content(text):
-    pattern = r"\[.*?\]"
+    pattern = r"【.*?】"
     cleaned_text = re.sub(pattern, '', text)
     return cleaned_text
 

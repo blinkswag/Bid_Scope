@@ -1,3 +1,4 @@
+# app/views.py
 from flask import render_template, request, jsonify, redirect, url_for, session, g
 from .controller.chat_controller import ChatController
 import markdown
@@ -5,9 +6,13 @@ from .db import Database
 from .utils import validate_file, remove_bracketed_content, check_user_role
 from .validation import validate_password
 import bcrypt
+from openai import OpenAI
+import os
 
 db = Database()
 chat_controller = ChatController()
+client = OpenAI(api_key=os.getenv('API_KEY'))
+ASSISTANT_ID = os.getenv('ASSISTANT_ID')
 
 def init_app(app):
     @app.before_request
@@ -16,12 +21,12 @@ def init_app(app):
         if user_email is None:
             g.user = None
         else:
-            g.user = db.users_collection.find_one({"Email": user_email})
+            g.user = db.users_collection.find_one({"Email": user_email.lower()})
 
     @app.route('/login', methods=['GET', 'POST'])
     def login():
         if request.method == 'POST':
-            email = request.form['username']
+            email = request.form['username'].lower()
             password = request.form['password']
             if not email or not password:
                 return jsonify({'success': False, 'error': 'Email and password are required'}), 400
@@ -168,6 +173,31 @@ def init_app(app):
         else:
             return "Error deleting user", 400
 
+    @app.route('/bot-settings', methods=['GET', 'POST'])
+    @check_user_role(['Super Admin'])
+    def bot_settings():
+        if request.method == 'POST':
+            # Handle form submission
+            update_data = {}
+            if 'name' in request.form:
+                update_data['name'] = request.form['name']
+            if 'description' in request.form:
+                update_data['description'] = request.form['description']
+            if 'instructions' in request.form:
+                update_data['instructions'] = request.form['instructions']
+            if 'model' in request.form:
+                update_data['model'] = request.form['model']
+            if 'temperature' in request.form:
+                update_data['temperature'] = float(request.form['temperature'])
+            
+            try:
+                client.beta.assistants.update(ASSISTANT_ID, **update_data)
+                return redirect(url_for('bot_settings'))
+            except Exception as e:
+                return jsonify({'error': str(e)}), 500
+
+        my_assistant = client.beta.assistants.retrieve(ASSISTANT_ID)
+        return render_template('bot_settings.html', assistant=my_assistant)
 
     @app.errorhandler(401)
     def unauthorized(error):

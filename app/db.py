@@ -9,14 +9,11 @@ load_dotenv()
 
 class Database:
     def __init__(self):
-        user = os.getenv('db_user')
-        password = os.getenv('db_pass')
-        connection_string = f'mongodb+srv://{user}:{password}@bidbot.eqofazi.mongodb.net/?retryWrites=true&w=majority&tls=true&tlsInsecure=true'
+        connection_string= os.getenv('mongo_srv')
         client = pymongo.MongoClient(connection_string, tlsCAFile=certifi.where())
-        # client = pymongo.MongoClient(connection_string)
 
         try:
-            client.server_info()  # Check if connection is successful
+            client.server_info()  
             self.db = client.Bid
             self.users_collection = self.db.Users
             self.threads_collection = self.db.Threads
@@ -25,6 +22,7 @@ class Database:
             raise e
 
     def check_user_credentials(self, email, password):
+        email = email.lower()
         user = self.users_collection.find_one({"Email": email})
         if user:
             stored_password = user['Password']
@@ -38,6 +36,7 @@ class Database:
         return self.users_collection.find({}, {"Password": 0})
 
     def add_user(self, username, email, password, role):
+        email = email.lower()
         if self.users_collection.find_one({"Username": username}):
             return "username_exists"
         if self.users_collection.find_one({"Email": email}):
@@ -53,6 +52,7 @@ class Database:
         return self.users_collection.find_one({"_id": ObjectId(user_id)}, {"Password": 0})
 
     def update_user(self, user_id, username, email, role, password=None):
+        email = email.lower()
         user = self.users_collection.find_one({"_id": ObjectId(user_id)})
         if not user:
             return False
