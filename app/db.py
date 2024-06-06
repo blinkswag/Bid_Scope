@@ -5,6 +5,7 @@ import bcrypt
 from dotenv import load_dotenv
 import os
 from .validation import validate_password
+from datetime import datetime
 load_dotenv()
 
 class Database:
@@ -73,16 +74,15 @@ class Database:
         result = self.users_collection.delete_one({"_id": ObjectId(user_id)})
         return result.deleted_count > 0
 
-    def update_user_threads(self, user_id, new_thread_id):
+    def update_user_threads(self, user_id, thread_id):
         user = self.get_user_by_id(user_id)
         if not user:
             return False
-        
+
         thread_ids = user.get('threads', [])
-        if len(thread_ids) >= 10:
-            thread_ids = thread_ids[1:]
-        thread_ids.append(new_thread_id)
-        
+        thread_ids = [t for t in thread_ids if t['id'] != thread_id]  # Remove the thread if it already exists
+        thread_ids.insert(0, {'id': thread_id, 'created_at': datetime.utcnow()})  # Add it to the top
+
         result = self.users_collection.update_one(
             {"_id": ObjectId(user_id)},
             {"$set": {"threads": thread_ids}}
@@ -93,4 +93,14 @@ class Database:
         user = self.get_user_by_id(user_id)
         if not user:
             return []
-        return user.get('threads', [])
+        threads = user.get('threads', [])
+        
+        # Provide a default value for created_at if it doesn't exist
+        for thread in threads:
+            if isinstance(thread, str):  # handle old threads that are just strings
+                threads = [{'id': t, 'created_at': datetime.utcnow()} for t in threads]
+                break
+            if 'created_at' not in thread:
+                thread['created_at'] = datetime.utcnow()
+        
+        return threads  # Return the threads as they are stored

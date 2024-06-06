@@ -1,4 +1,3 @@
-# app/views.py
 from flask import render_template, request, jsonify, redirect, url_for, session, g
 from .controller.chat_controller import ChatController
 import markdown

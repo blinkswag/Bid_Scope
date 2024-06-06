@@ -1,4 +1,3 @@
-# app/controller/chat_controller.py
 from app.model.chat_model import ChatModel
 import json
 import time
@@ -6,6 +5,7 @@ from werkzeug.utils import secure_filename
 from ..utils import remove_bracketed_content, validate_file
 from flask import session
 from app.db import Database
+from datetime import datetime
 
 db = Database()
 
@@ -20,11 +20,15 @@ class ChatController:
                 thread = self.chat_model.create_thread()
                 response['thread_id'] = thread.id
 
-                # Store the new thread ID in the user's record
+                # Store the new thread ID in the user's record with a created_at timestamp
                 user_id = session.get('user_id')
                 db.update_user_threads(user_id, thread.id)
             else:
                 response['thread_id'] = thread_id
+
+                # Update the thread to the top on interaction
+                user_id = session.get('user_id')
+                db.update_user_threads(user_id, thread_id)
 
             if files:
                 file_statuses = []

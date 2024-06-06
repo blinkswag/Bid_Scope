@@ -1,4 +1,3 @@
-<!-- app/templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -48,8 +47,8 @@
                     </div>
                 </button>
             {% endif %}
-            {% for i, thread_id in enumerate(thread_ids[:5]) %}
-                <button class="btn btn-3" onclick="loadThread('{{ thread_id }}')">Thread {{ i+1 }}</button>
+            {% for i, thread in enumerate(thread_ids[:5]) %}
+            <button class="btn btn-3" onclick="loadThread('{{ thread.id }}')">Thread {{ i+1 }}</button>
             {% endfor %}
             <button class="button logout-button" role="button">
                 <span>Logout</span>
