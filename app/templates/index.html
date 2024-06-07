@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    <script src="https://cdn.lordicon.com/lordicon.js"></script>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <title>BidBot</title>
+</head>
+<body>
+    <div class="main-container">
+        <div class="sidebar">
+            <div>
+                <h3>{{ username }}</h3>
+                <h6>{{ role }}</h6>
+            </div>
+            <button class="cssbuttons-io-button" onclick="startNewChat()">
+                <span class="button-text">New Chat</span>
+                <div class="icon">
+                    <svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z" fill="currentColor"></path>
+                    </svg>
+                </div>
+            </button>
+            {% if role in ['Super Admin', 'Admin'] %}
+                <button class="cssbuttons-io-button" onclick="window.location.href='/manage-users'">
+                    <span class="button-text">Manage Users</span>
+                    <div class="icon">
+                        <img src="/static/manage_users.png" alt="Manage Users Icon">
+                    </div>
+                </button>
+            {% endif %}
+            <button class="cssbuttons-io-button" onclick="window.location.href='/edit-profile'">
+                <span class="button-text">Edit Profile</span>
+                <div class="icon">
+                    <img src="/static/edit_profile.png" alt="Edit Profile Icon">
+                </div>
+            </button>
+            {% if role == 'Super Admin' %}
+                <button class="cssbuttons-io-button" onclick="window.location.href='/bot-settings'">
+                    <span class="button-text">Bot Settings</span>
+                    <div class="icon">
+                        <img src="/static/favicon.png" alt="Settings Icon">
+                    </div>
+                </button>
+            {% endif %}
+            {% for i, thread in enumerate(thread_ids[:5]) %}
+            <button class="btn btn-3" onclick="loadThread('{{ thread.id }}')">Thread {{ i+1 }}</button>
+            {% endfor %}
+            <button class="button logout-button" role="button">
+                <span>Logout</span>
+                <div class="icon">
+                    <i class="fa fa-remove"></i>
+                    <i class="fa fa-check" style="display: none;"></i>
+                </div>
+            </button>
+        </div>
+        <div class="chat-container">
+            <div id="chatWindow" class="d-flex flex-column">
+                <div id="loadingMessage" class="message loading" style="display: none;">
+                    <i class="fas fa-spinner fa-spin"></i> Loading...
+                </div>
+            </div>
+            <form id="chatForm" class="input-group">
+                <label for="fileUpload" class="btn btn-light">
+                    <img src="static/attachment.png" alt="Attach file" class="file-icon">
+                    <input type="file" id="fileUpload" multiple style="display: none;">
+                </label>
+                <input type="hidden" id="threadId" name="thread_id">
+                <input type="text" id="messageInput" class="form-control" placeholder="Type your message here..." required>
+                <button class="btn btn-primary send-button" type="submit" aria-label="Send"><i class="fas fa-paper-plane"></i></button>
+            </form>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function logout() {
+            localStorage.removeItem('logged_in');
+            localStorage.removeItem('email');
+            window.location.href = '/login';
+        }
+
+        function startNewChat() {
+            $.ajax({
+                type: 'POST',
+                url: '/new-chat',
+                success: function(response) {
+                    $('#threadId').val(response.thread_id);
+                    $('#chatWindow').html(''); // Clear the chat window for new chat
+                },
+                error: function() {
+                    alert('Failed to start a new chat.');
+                }
+            });
+        }
+
+            document.addEventListener('DOMContentLoaded', function() {
+            var logoutButton = document.querySelector('.button.logout-button');
+            logoutButton.addEventListener('click', function() {
+                this.classList.add('success');
+                setTimeout(function() {
+                    logoutButton.classList.remove('success');
+                    logout();
+                }, 1000);
+            });
+        });
+
+        $(document).ready(function() {
+            if (!localStorage.getItem('logged_in')) {
+                window.location.href = '/login';
+            }
+
+            $('#chatForm').submit(function(event) {
+    event.preventDefault();
+    var messageText = $('#messageInput').val();
+    var threadId = $('#threadId').val();
+    if (messageText.trim() === '') {
+        return;
+    }
+    var formData = new FormData(this);
+    formData.append('message', messageText);
+    formData.append('thread_id', threadId);
+    $('#chatWindow').append('<div class="message-container user"><div class="message user-message">' + messageText + '</div><img src="static/User.png" class="avatar"></div>');
+    $('#messageInput').val('');
+    var loadingElementId = 'loadingMessage' + Date.now();
+    var loadingHtml = '<div id="' + loadingElementId + '" class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response"><img src="static/wait.gif" style="width:50px;height:50px;"></div></div>';
+    $('#chatWindow').append(loadingHtml);
+    scrollToBottom();
+    $.ajax({
+        type: 'POST',
+        url: '/',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            $('#' + loadingElementId).remove();
+            $('#chatWindow').append('<div class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response">' + response.message + '</div></div>');
+            scrollToBottom();
+        },
+        error: function() {
+            $('#' + loadingElementId).remove();
+            $('#chatWindow').append('<div class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response">Failed to send message.</div></div>');
+            scrollToBottom();
+        }
+    });
+});
+
+            $('#fileUpload').on('change', function() {
+                var files = $(this).prop('files');
+                if (files.length === 0) {
+                    alert('Please select a file to upload.');
+                    return;
+                }
+                processFiles(0, files);
+            });
+
+            function processFiles(index, files) {
+                if (index >= files.length) {
+                    return;
+                }
+                var file = files[index];
+                var fileName = file.name;
+                var predefinedMessage = `From the file "${fileName}", scan the bid files for critical information essential for bidding, covering topics such as Project Overview and Scope of Work, product specifications, submission guidelines, Evaluation Criteria, financial and legal compliance, delivery and packaging, critical elements and deadlines, Terms and Conditions, Insurance and Bonding Requirements, Clarifications and Addenda, Bid Pricing and Cost Breakdown and Bid Pricing and Cost Breakdown and more such kind of topics. Explain this information in an organized and structured manner. Extract information pertinent to bidding. Your response should be in detail with high explanation of each topics, and don't miss any information from bid file. `;
+                var formData = new FormData();
+                formData.append('file', file);
+                formData.append('message', predefinedMessage);
+                formData.append('thread_id', $('#threadId').val());
+                var loadingElementId = 'loadingMessage' + Date.now();
+                var fileLoadingHtml = '<div id="' + loadingElementId + '" class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response"><img src="static/upload.gif" style="width:50px;height:50px;"> File Uploading...</div></div>';
+                $('#chatWindow').append(fileLoadingHtml);
+                scrollToBottom();
+                $.ajax({
+                    type: 'POST',
+                    url: '/',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $('#' + loadingElementId).remove();
+                        $('#chatWindow').append('<div class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response">' + response.message + '</div></div>');
+                        $('#messageInput').val('');
+                        $('#threadId').val(response.thread_id);
+                        scrollToBottom();
+                        processFiles(index + 1, files);
+                    },
+                    error: function(xhr, status, error) {
+                        $('#' + loadingElementId).remove();
+                        $('#chatWindow').append('<div class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response">Failed to upload file.</div></div>');
+                        scrollToBottom();
+                        processFiles(index + 1, files);
+                    }
+                });
+            }
+
+            function loadThread(threadId) {
+                $.ajax({
+                    type: 'GET',
+                    url: '/get-thread-messages',
+                    data: { thread_id: threadId },
+                    success: function(response) {
+                        if (response.messages) {
+                            $('#chatWindow').html(''); // Clear the chat window
+                            response.messages.forEach(function(msg) {
+                                var messageClass = msg.role === 'user' ? 'user-message' : 'bot-response';
+                                $('#chatWindow').append('<div class="message-container ' + msg.role + '"><img src="static/' + (msg.role === 'user' ? 'User.png' : 'blinksigns_logo.jpg') + '" class="avatar"><div class="message ' + messageClass + '">' + msg.content + '</div></div>');
+                            });
+                            $('#threadId').val(threadId); // Set the current thread ID
+                            scrollToBottom();
+                        } else {
+                            alert('Failed to load thread messages.');
+                        }
+                    },
+                    error: function() {
+                        alert('Failed to load thread messages.');
+                    }
+                });
+            }
+
+            function scrollToBottom() {
+                $('#chatWindow').animate({ scrollTop: $('#chatWindow')[0].scrollHeight }, 1000);
+            }
+
+            // Add click event to thread buttons
+            $('button[onclick^="loadThread"]').on('click', function() {
+                var threadId = $(this).attr('onclick').match(/'([^']+)'/)[1];
+                loadThread(threadId);
+            });
+        });
+    </script>
+</body>
+</html>

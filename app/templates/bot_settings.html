@@ -1,0 +1,109 @@
+<!-- app/templates/bot_settings.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot Settings</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <style>
+        body {
+            padding: 20px;
+            background-color: #000000; /* Light grey background */
+            color: white;
+        }
+        .container {
+            background: #141414;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #fcc404;
+            margin-bottom: 30px;
+        }
+        form {
+            margin-top: 20px;
+        }
+        .btn-primary {
+            background-color: #6c757d;
+            border: none;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #fcc404;
+            transform: scale(1.05);
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.3s;
+            width:10%;
+        }
+        .btn-secondary i {
+            margin-right: 5px;
+        }
+        .btn-secondary:hover {
+            background-color: #fcc404;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+        <h2>Bot Settings</h2>
+        <form method="POST" action="">
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{ assistant.name }}">
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3">{{ assistant.description }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label for="instructions" class="form-label">Instructions</label>
+                <textarea class="form-control" id="instructions" name="instructions" rows="5">{{ assistant.instructions }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label for="model" class="form-label">Model</label>
+                <select class="form-control" id="model" name="model">
+                    <option value="gpt-3.5-turbo-instruct" {% if assistant.model == 'gpt-3.5-turbo-instruct' %}selected{% endif %}>gpt-3.5-turbo-instruct</option>
+                    <option value="gpt-3.5-turbo-1106" {% if assistant.model == 'gpt-3.5-turbo-1106' %}selected{% endif %}>gpt-3.5-turbo-1106</option>
+                    <option value="gpt-3.5-turbo" {% if assistant.model == 'gpt-3.5-turbo' %}selected{% endif %}>gpt-3.5-turbo</option>
+                    <option value="gpt-3.5-turbo-0125" {% if assistant.model == 'gpt-3.5-turbo-0125' %}selected{% endif %}>gpt-3.5-turbo-0125</option>
+                    <option value="gpt-4-32k-0613" {% if assistant.model == 'gpt-4-32k-0613' %}selected{% endif %}>gpt-4-32k-0613</option>
+                    <option value="gpt-4-32k" {% if assistant.model == 'gpt-4-32k' %}selected{% endif %}>gpt-4-32k</option>
+                    <option value="gpt-4-0613" {% if assistant.model == 'gpt-4-0613' %}selected{% endif %}>gpt-4-0613</option>
+                    <option value="gpt-4" {% if assistant.model == 'gpt-4' %}selected{% endif %}>gpt-4</option>
+                    <option value="gpt-4-1106-vision-preview" {% if assistant.model == 'gpt-4-1106-vision-preview' %}selected{% endif %}>gpt-4-1106-vision-preview</option>
+                    <option value="gpt-4-vision-preview" {% if assistant.model == 'gpt-4-vision-preview' %}selected{% endif %}>gpt-4-vision-preview</option>
+                    <option value="gpt-4-1106-preview" {% if assistant.model == 'gpt-4-1106-preview' %}selected{% endif %}>gpt-4-1106-preview</option>
+                    <option value="gpt-4-0125-preview" {% if assistant.model == 'gpt-4-0125-preview' %}selected{% endif %}>gpt-4-0125-preview</option>
+                    <option value="gpt-4-turbo-preview" {% if assistant.model == 'gpt-4-turbo-preview' %}selected{% endif %}>gpt-4-turbo-preview</option>
+                    <option value="gpt-4-turbo-2024-04-09" {% if assistant.model == 'gpt-4-turbo-2024-04-09' %}selected{% endif %}>gpt-4-turbo-2024-04-09</option>
+                    <option value="gpt-4-turbo" {% if assistant.model == 'gpt-4-turbo' %}selected{% endif %}>gpt-4-turbo</option>
+                    <option value="gpt-4o-2024-05-13" {% if assistant.model == 'gpt-4o-2024-05-13' %}selected{% endif %}>gpt-4o-2024-05-13</option>
+                    <option value="gpt-4o" {% if assistant.model == 'gpt-4o' %}selected{% endif %}>gpt-4o</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="temperature" class="form-label">Temperature</label>
+                <input type="number" class="form-control" id="temperature" name="temperature" step="0.1" min="0" max="1" value="{{ assistant.temperature }}">
+            </div>
+            <button type="submit" class="btn btn-primary">Update Settings</button>
+        </form>
+    </div>
+</body>
+</html>
