@@ -79,76 +79,61 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function logout() {
-            localStorage.removeItem('logged_in');
-            localStorage.removeItem('email');
-            window.location.href = '/login';
+        function createNewThreadIfNone() {
+            if (!localStorage.getItem('current_thread_id')) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/new-chat',
+                    success: function(response) {
+                        localStorage.setItem('current_thread_id', response.thread_id);
+                        $('#threadId').val(response.thread_id);
+                    },
+                    error: function() {
+                        alert('Failed to start a new chat.');
+                    }
+                });
+            } else {
+                $('#threadId').val(localStorage.getItem('current_thread_id'));
+            }
         }
-
-        function startNewChat() {
-            $.ajax({
-                type: 'POST',
-                url: '/new-chat',
-                success: function(response) {
-                    $('#threadId').val(response.thread_id);
-                    $('#chatWindow').html(''); // Clear the chat window for new chat
-                },
-                error: function() {
-                    alert('Failed to start a new chat.');
-                }
-            });
-        }
-
-            document.addEventListener('DOMContentLoaded', function() {
-            var logoutButton = document.querySelector('.button.logout-button');
-            logoutButton.addEventListener('click', function() {
-                this.classList.add('success');
-                setTimeout(function() {
-                    logoutButton.classList.remove('success');
-                    logout();
-                }, 1000);
-            });
-        });
 
         $(document).ready(function() {
-            if (!localStorage.getItem('logged_in')) {
-                window.location.href = '/login';
-            }
+            createNewThreadIfNone();
 
             $('#chatForm').submit(function(event) {
-    event.preventDefault();
-    var messageText = $('#messageInput').val();
-    var threadId = $('#threadId').val();
-    if (messageText.trim() === '') {
-        return;
-    }
-    var formData = new FormData(this);
-    formData.append('message', messageText);
-    formData.append('thread_id', threadId);
-    $('#chatWindow').append('<div class="message-container user"><div class="message user-message">' + messageText + '</div><img src="static/User.png" class="avatar"></div>');
-    $('#messageInput').val('');
-    var loadingElementId = 'loadingMessage' + Date.now();
-    var loadingHtml = '<div id="' + loadingElementId + '" class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response"><img src="static/wait.gif" style="width:50px;height:50px;"></div></div>';
-    $('#chatWindow').append(loadingHtml);
-    scrollToBottom();
-    $.ajax({
-        type: 'POST',
-        url: '/',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            $('#' + loadingElementId).remove();
-            $('#chatWindow').append('<div class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response">' + response.message + '</div></div>');
-            scrollToBottom();
-        },
-        error: function() {
-            $('#' + loadingElementId).remove();
-            $('#chatWindow').append('<div class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response">Failed to send message.</div></div>');
-            scrollToBottom();
-        }
-    });
-});
+                event.preventDefault();
+                var messageText = $('#messageInput').val();
+                var threadId = $('#threadId').val();
+                if (messageText.trim() === '') {
+                    return;
+                }
+                var formData = new FormData(this);
+                formData.append('message', messageText);
+                formData.append('thread_id', threadId);
+                $('#chatWindow').append('<div class="message-container user"><div class="message user-message">' + messageText + '</div><img src="static/User.png" class="avatar"></div>');
+                $('#messageInput').val('');
+                var loadingElementId = 'loadingMessage' + Date.now();
+                var loadingHtml = '<div id="' + loadingElementId + '" class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response"><img src="static/wait.gif" style="width:50px;height:50px;"></div></div>';
+                $('#chatWindow').append(loadingHtml);
+                scrollToBottom();
+                $.ajax({
+                    type: 'POST',
+                    url: '/',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $('#' + loadingElementId).remove();
+                        $('#chatWindow').append('<div class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response">' + response.message + '</div></div>');
+                        scrollToBottom();
+                    },
+                    error: function() {
+                        $('#' + loadingElementId).remove();
+                        $('#chatWindow').append('<div class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response">Failed to send message.</div></div>');
+                        scrollToBottom();
+                    }
+                });
+            });
 
             $('#fileUpload').on('change', function() {
                 var files = $(this).prop('files');
@@ -230,6 +215,23 @@
                 var threadId = $(this).attr('onclick').match(/'([^']+)'/)[1];
                 loadThread(threadId);
             });
+
+            document.addEventListener('DOMContentLoaded', function() {
+                var logoutButton = document.querySelector('.button.logout-button');
+                logoutButton.addEventListener('click', function() {
+                    this.classList.add('success');
+                    setTimeout(function() {
+                        logoutButton.classList.remove('success');
+                        logout();
+                    }, 1000);
+                });
+            });
+
+            function logout() {
+                localStorage.removeItem('logged_in');
+                localStorage.removeItem('email');
+                window.location.href = '/login';
+            }
         });
     </script>
 </body>
