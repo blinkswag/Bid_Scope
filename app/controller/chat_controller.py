@@ -17,6 +17,7 @@ class ChatController:
         response = {"messages": [], "thread_id": thread_id, "user_message": "", "bot_response": ""}
         try:
             if not thread_id:
+<<<<<<< HEAD
                 thread = self.chat_model.create_thread()
                 response['thread_id'] = thread.id
 
@@ -29,6 +30,13 @@ class ChatController:
                 # Update the thread to the top on interaction
                 user_id = session.get('user_id')
                 db.update_user_threads(user_id, thread_id)
+=======
+                return {"error": "Thread ID is required."}, 400
+
+            # Update the thread to the top on interaction
+            user_id = session.get('user_id')
+            db.update_user_threads(user_id, thread_id)
+>>>>>>> master
 
             if files:
                 file_statuses = []
@@ -43,20 +51,36 @@ class ChatController:
                 response['messages'].extend(file_statuses)
 
             if message:
+<<<<<<< HEAD
                 self.chat_model.send_message(response['thread_id'], message)
 
                 run = self.chat_model.create_run(response['thread_id'])
 
                 run_ret = self.chat_model.retrieve_run(response['thread_id'], run.id)
+=======
+                self.chat_model.send_message(thread_id, message)
+
+                run = self.chat_model.create_run(thread_id)
+
+                run_ret = self.chat_model.retrieve_run(thread_id, run.id)
+>>>>>>> master
                 run_ret = json.loads(run_ret.model_dump_json())
 
                 while run_ret['status'] != 'completed':
                     time.sleep(3)
+<<<<<<< HEAD
                     run_ret = self.chat_model.retrieve_run(response['thread_id'], run.id)
                     run_ret = json.loads(run_ret.model_dump_json())
 
                 if run_ret['status'] == 'completed':
                     bot_resp = self.chat_model.get_messages(response['thread_id'])
+=======
+                    run_ret = self.chat_model.retrieve_run(thread_id, run.id)
+                    run_ret = json.loads(run_ret.model_dump_json())
+
+                if run_ret['status'] == 'completed':
+                    bot_resp = self.chat_model.get_messages(thread_id)
+>>>>>>> master
 
                     cleaned_bot_response = remove_bracketed_content(bot_resp)
                     response['bot_response'] = cleaned_bot_response

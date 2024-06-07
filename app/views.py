@@ -235,4 +235,15 @@ def init_app(app):
 
     def format_message_markdown(message):
         html = markdown.markdown(message, extensions=['fenced_code', 'tables'])
+<<<<<<< HEAD
         return html
+=======
+        return html
+
+    @app.route('/new-chat', methods=['POST'])
+    def new_chat():
+        thread = chat_controller.chat_model.create_thread()
+        user_id = session.get('user_id')
+        db.update_user_threads(user_id, thread.id)
+        return jsonify({'thread_id': thread.id})
+>>>>>>> master

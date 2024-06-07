@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link href="https://fonts.googleapis.com/css?family=Asap:400,500,600,700" rel="stylesheet">
+<<<<<<< HEAD
+=======
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+
+>>>>>>> master
     <style>
         body {
             background-color: #141414;
@@ -76,12 +81,15 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+<<<<<<< HEAD
             // Redirect if already logged in
             if (localStorage.getItem('logged_in') === 'true') {
                 window.location.href = '/';
                 return;
             }
 
+=======
+>>>>>>> master
             const loginForm = document.querySelector('.login');
             loginForm.addEventListener('submit', function(event) {
                 event.preventDefault();
