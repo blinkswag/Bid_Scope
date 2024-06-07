@@ -86,9 +86,6 @@
         }
 
         function startNewChat() {
-<<<<<<< HEAD
-            location.reload(); // Reloads the page
-=======
             $.ajax({
                 type: 'POST',
                 url: '/new-chat',
@@ -100,7 +97,6 @@
                     alert('Failed to start a new chat.');
                 }
             });
->>>>>>> master
         }
 
             document.addEventListener('DOMContentLoaded', function() {
@@ -120,39 +116,6 @@
             }
 
             $('#chatForm').submit(function(event) {
-<<<<<<< HEAD
-                event.preventDefault();
-                var messageText = $('#messageInput').val();
-                if (messageText.trim() === '') {
-                    return;
-                }
-                var formData = new FormData(this);
-                formData.append('message', messageText);
-                $('#chatWindow').append('<div class="message-container user"><div class="message user-message">' + messageText + '</div><img src="static/User.png" class="avatar"></div>');
-                $('#messageInput').val('');
-                var loadingElementId = 'loadingMessage' + Date.now();
-                var loadingHtml = '<div id="' + loadingElementId + '" class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response"><img src="static/wait.gif" style="width:50px;height:50px;"></div></div>';
-                $('#chatWindow').append(loadingHtml);
-                scrollToBottom();
-                $.ajax({
-                    type: 'POST',
-                    url: '/',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        $('#' + loadingElementId).remove();
-                        $('#chatWindow').append('<div class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response">' + response.message + '</div></div>');
-                        scrollToBottom();
-                    },
-                    error: function() {
-                        $('#' + loadingElementId).remove();
-                        $('#chatWindow').append('<div class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response">Failed to send message.</div></div>');
-                        scrollToBottom();
-                    }
-                });
-            });
-=======
     event.preventDefault();
     var messageText = $('#messageInput').val();
     var threadId = $('#threadId').val();
@@ -186,7 +149,6 @@
         }
     });
 });
->>>>>>> master
 
             $('#fileUpload').on('change', function() {
                 var files = $(this).prop('files');
