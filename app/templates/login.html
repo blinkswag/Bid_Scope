@@ -1,4 +1,3 @@
-<!-- app/templates/login.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,6 +50,11 @@
         .login button:hover {
             background-color: #f9b904, 5%;
         }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+        }
         a {
             text-decoration: none;
             color: white;
@@ -66,35 +70,46 @@
         <input type="text" name="username" placeholder="Email" required>
         <input type="password" name="password" placeholder="Password" required>
         <button type="submit">Login</button>
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
     </form>
     <a href="https://codepen.io/davinci/" target="_blank">Check my other pens</a>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const loginForm = document.querySelector('.login');
-        loginForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            const formData = new FormData(loginForm);
-            fetch('/login', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.success) {
-                    localStorage.setItem('logged_in', 'true');
-                    localStorage.setItem('email', data.email);
-                    window.location.href = '/'; // Redirect to the chat page
-                } else {
-                    alert('Login failed: ' + data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Error during login:', error);
-                alert('Login failed, please try again.');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Redirect if already logged in
+            if (localStorage.getItem('logged_in') === 'true') {
+                window.location.href = '/';
+                return;
+            }
+
+            const loginForm = document.querySelector('.login');
+            loginForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const formData = new FormData(loginForm);
+                fetch('/login', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const errorMessageDiv = document.getElementById('errorMessage');
+                    if(data.success) {
+                        localStorage.setItem('logged_in', 'true');
+                        localStorage.setItem('email', data.email);
+                        window.location.href = '/'; // Redirect to the chat page
+                    } else {
+                        errorMessageDiv.textContent = `Login failed: ${data.error}`;
+                        errorMessageDiv.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error during login:', error);
+                    const errorMessageDiv = document.getElementById('errorMessage');
+                    errorMessageDiv.textContent = 'Login failed, please try again.';
+                    errorMessageDiv.style.display = 'block';
+                });
             });
         });
-    });
     </script>
 </body>
 </html>

@@ -1,4 +1,3 @@
-<!-- app/templates/manage_users.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,7 +9,7 @@
     <style>
         body {
             padding: 20px;
-            background-color: #000000; /* Light grey background */
+            background-color: #000000;
             color: white;
         }
         .container {
@@ -22,22 +21,19 @@
         h1, h2, h3 {
             color: #fcc404;
         }
-        h1, h2, h3 {
-            margin-bottom: 30px;
-        }
         table {
-            background-color: #141414; /* Set table background color */
-            color: white; /* Set font color inside table */
+            background-color: #141414;
+            color: white;
         }
         .table td, .table th {
-            color: white; /* Set font color inside table cells */
+            color: white;
         }
         th {
-            background-color: #141414; /* Set headings background color */
-            color: #fcc404; /* Set headings color */
+            background-color: #141414;
+            color: #fcc404;
         }
         td, th {
-            border: none; /* Remove border */
+            border: none;
         }
         form {
             margin-top: 20px;
@@ -70,12 +66,28 @@
             background-color: #fcc404;
             transform: scale(1.05);
         }
+        .btn-danger {
+            background-color: #c0392b;
+            border: none;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .btn-danger:hover {
+            background-color: #e74c3c;
+            transform: scale(1.05);
+        }
         .edit-form {
             display: none;
             margin-top: 10px;
         }
         .alert {
             margin-bottom: 20px;
+        }
+        .modal-content {
+            background-color: #141414;
+            color: white;
+        }
+        .modal-header, .modal-body, .modal-footer {
+            border: none;
         }
     </style>
 </head>
@@ -108,9 +120,7 @@
                     <td>
                         {% if role == 'Super Admin' or (role == 'Admin' and user.role == 'User') %}
                             <button class="btn btn-primary btn-sm edit-btn" data-id="{{ user._id }}">Edit</button>
-                            <form action="/delete-user/{{ user._id }}" method="POST" style="display:inline;" onsubmit="return confirmDelete()">
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </form>
+                            <button class="btn btn-danger btn-sm delete-btn" data-id="{{ user._id }}">Delete</button>
                         {% else %}
                             <button class="btn btn-primary btn-sm" disabled>Edit</button>
                             <button class="btn btn-danger btn-sm" disabled>Delete</button>
@@ -183,11 +193,25 @@
         </form>
     </div>
 
-    <script>
-        function confirmDelete() {
-            return confirm('Are you sure you want to delete this user?');
-        }
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this user?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <script>
         function validatePassword(id) {
             var password = document.getElementById('password-' + id).value;
             if (password) {
@@ -202,6 +226,9 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             const editButtons = document.querySelectorAll('.edit-btn');
+            const deleteButtons = document.querySelectorAll('.delete-btn');
+            let deleteUserFormAction = '';
+
             editButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const userId = this.getAttribute('data-id');
@@ -213,7 +240,34 @@
                     }
                 });
             });
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const userId = this.getAttribute('data-id');
+                    deleteUserFormAction = `/delete-user/${userId}`;
+                    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+                    deleteModal.show();
+                });
+            });
+
+            document.getElementById('confirmDelete').addEventListener('click', function() {
+                fetch(deleteUserFormAction, {
+                    method: 'POST'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('Failed to delete user.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
         });
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
