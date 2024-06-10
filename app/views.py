@@ -61,6 +61,9 @@ def init_app(app):
                     if not valid:
                         return jsonify({'error': error}), 400
             response = chat_controller.handle_message(files, message, thread_id)
+            if "error" in response['messages']:
+                return jsonify({'error': response['messages']}), 400
+            
             formatted_response = ''
             if message:
                 formatted_response = ''
@@ -73,6 +76,7 @@ def init_app(app):
                     formatted_response += f'<div class="message bot-response">{format_message_markdown(cleaned_bot_response)}</div>'
             return jsonify({'message': formatted_response, 'thread_id': response['thread_id']})
         return render_template('index.html', role=session.get('role'), username=session.get('username'), thread_ids=thread_ids)
+
 
     @app.route('/edit-profile', methods=['GET', 'POST'])
     def edit_profile():
