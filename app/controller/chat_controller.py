@@ -5,7 +5,6 @@ from werkzeug.utils import secure_filename
 from ..utils import remove_bracketed_content, validate_file
 from flask import session
 from app.db import Database
-from datetime import datetime
 
 db = Database()
 
@@ -17,7 +16,8 @@ class ChatController:
         response = {"messages": [], "thread_id": thread_id, "user_message": "", "bot_response": ""}
         try:
             if not thread_id:
-                return {"error": "Thread ID is required."}, 400
+                response['messages'].append("Thread ID is required.")
+                return response
 
             # Update the thread to the top on interaction
             user_id = session.get('user_id')
