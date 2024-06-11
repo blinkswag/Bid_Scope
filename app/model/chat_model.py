@@ -71,3 +71,4 @@ class ChatModel:
         response = self.client.beta.threads.messages.list(thread_id=thread_id)
         parsed_data = json.loads(response.model_dump_json())
         return parsed_data['data']
+
