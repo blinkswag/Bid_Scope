@@ -5,7 +5,6 @@ from werkzeug.utils import secure_filename
 from ..utils import remove_bracketed_content, validate_file
 from flask import session
 from app.db import Database
-from datetime import datetime
 
 db = Database()
 
@@ -17,18 +16,12 @@ class ChatController:
         response = {"messages": [], "thread_id": thread_id, "user_message": "", "bot_response": ""}
         try:
             if not thread_id:
-                thread = self.chat_model.create_thread()
-                response['thread_id'] = thread.id
+                response['messages'].append("Thread ID is required.")
+                return response
 
-                # Store the new thread ID in the user's record with a created_at timestamp
-                user_id = session.get('user_id')
-                db.update_user_threads(user_id, thread.id)
-            else:
-                response['thread_id'] = thread_id
-
-                # Update the thread to the top on interaction
-                user_id = session.get('user_id')
-                db.update_user_threads(user_id, thread_id)
+            # Update the thread to the top on interaction
+            user_id = session.get('user_id')
+            db.update_user_threads(user_id, thread_id)
 
             if files:
                 file_statuses = []
@@ -40,23 +33,28 @@ class ChatController:
                     filename = secure_filename(file.filename)
                     file_status = self.chat_model.upload_file(file)
                     file_statuses.append(f"{filename}: {file_status}")
+                    session['uploaded_file_name'] = filename  # Store the uploaded file name in the session
                 response['messages'].extend(file_statuses)
 
             if message:
-                self.chat_model.send_message(response['thread_id'], message)
+                # Check if a file was uploaded in this session and prepend the message accordingly
+                if 'uploaded_file_name' in session:
+                    message = f'From the file {session["uploaded_file_name"]}: {message}'
+                
+                self.chat_model.send_message(thread_id, message)
 
-                run = self.chat_model.create_run(response['thread_id'])
+                run = self.chat_model.create_run(thread_id)
 
-                run_ret = self.chat_model.retrieve_run(response['thread_id'], run.id)
+                run_ret = self.chat_model.retrieve_run(thread_id, run.id)
                 run_ret = json.loads(run_ret.model_dump_json())
 
                 while run_ret['status'] != 'completed':
                     time.sleep(3)
-                    run_ret = self.chat_model.retrieve_run(response['thread_id'], run.id)
+                    run_ret = self.chat_model.retrieve_run(thread_id, run.id)
                     run_ret = json.loads(run_ret.model_dump_json())
 
                 if run_ret['status'] == 'completed':
-                    bot_resp = self.chat_model.get_messages(response['thread_id'])
+                    bot_resp = self.chat_model.get_messages(thread_id)
 
                     cleaned_bot_response = remove_bracketed_content(bot_resp)
                     response['bot_response'] = cleaned_bot_response

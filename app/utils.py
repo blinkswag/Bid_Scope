@@ -1,4 +1,3 @@
-# app/utils.py
 import re
 from flask import redirect, url_for, session
 from functools import wraps

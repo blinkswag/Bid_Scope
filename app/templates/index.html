@@ -17,7 +17,7 @@
                 <h3>{{ username }}</h3>
                 <h6>{{ role }}</h6>
             </div>
-            <button class="cssbuttons-io-button" onclick="startNewChat()">
+            <button class="cssbuttons-io-button" onclick="prepareNewChat()">
                 <span class="button-text">New Chat</span>
                 <div class="icon">
                     <svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -51,7 +51,7 @@
             {% for i, thread in enumerate(thread_ids[:5]) %}
             <button class="btn btn-3" onclick="loadThread('{{ thread.id }}')">Thread {{ i+1 }}</button>
             {% endfor %}
-            <button class="button logout-button" role="button">
+            <button class="button logout-button" onclick="logout()" role="button">
                 <span>Logout</span>
                 <div class="icon">
                     <i class="fa fa-remove"></i>
@@ -79,40 +79,93 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        var newChatPending = false;
+
         function logout() {
-            localStorage.removeItem('logged_in');
-            localStorage.removeItem('email');
-            window.location.href = '/login';
-        }
-
-        function startNewChat() {
-            location.reload(); // Reloads the page
-        }
-
-            document.addEventListener('DOMContentLoaded', function() {
-            var logoutButton = document.querySelector('.button.logout-button');
-            logoutButton.addEventListener('click', function() {
-                this.classList.add('success');
-                setTimeout(function() {
-                    logoutButton.classList.remove('success');
-                    logout();
-                }, 1000);
+            $.ajax({
+                type: 'GET',
+                url: '/logout',
+                success: function() {
+                    localStorage.removeItem('logged_in');
+                    localStorage.removeItem('email');
+                    window.location.href = '/login';
+                },
+                error: function() {
+                    alert('Failed to logout.');
+                }
             });
-        });
+        }
+
+        function prepareNewChat() {
+            newChatPending = true;
+            localStorage.removeItem('current_thread_id');
+            $('#threadId').val('');
+            $('#chatWindow').html(''); // Clear the chat window for new chat
+        }
+
+        function loadThread(threadId) {
+            newChatPending = false;
+            $.ajax({
+                type: 'GET',
+                url: '/get-thread-messages',
+                data: { thread_id: threadId },
+                success: function(response) {
+                    if (response.messages) {
+                        $('#chatWindow').html(''); // Clear the chat window
+                        response.messages.forEach(function(msg) {
+                            var messageClass = msg.role === 'user' ? 'user-message' : 'bot-response';
+                            $('#chatWindow').append('<div class="message-container ' + msg.role + '"><img src="static/' + (msg.role === 'user' ? 'User.png' : 'blinksigns_logo.jpg') + '" class="avatar"><div class="message ' + messageClass + '">' + msg.content + '</div></div>');
+                        });
+                        $('#threadId').val(threadId); // Set the current thread ID
+                        localStorage.setItem('current_thread_id', threadId); // Update local storage
+                        scrollToBottom();
+                    } else {
+                        alert('Failed to load thread messages.');
+                    }
+                },
+                error: function() {
+                    alert('Failed to load thread messages.');
+                }
+            });
+        }
 
         $(document).ready(function() {
-            if (!localStorage.getItem('logged_in')) {
-                window.location.href = '/login';
-            }
-
             $('#chatForm').submit(function(event) {
                 event.preventDefault();
                 var messageText = $('#messageInput').val();
                 if (messageText.trim() === '') {
                     return;
                 }
-                var formData = new FormData(this);
+
+                var threadId = $('#threadId').val();
+                if (!threadId) {
+                    createNewThreadAndSendMessage(messageText);
+                } else {
+                    sendMessage(messageText, threadId);
+                }
+            });
+
+            function createNewThreadAndSendMessage(messageText) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/new-chat',
+                    success: function(response) {
+                        var threadId = response.thread_id;
+                        localStorage.setItem('current_thread_id', threadId);
+                        $('#threadId').val(threadId);
+                        sendMessage(messageText, threadId);
+                        newChatPending = false;
+                    },
+                    error: function() {
+                        alert('Failed to start a new chat.');
+                    }
+                });
+            }
+
+            function sendMessage(messageText, threadId) {
+                var formData = new FormData($('#chatForm')[0]);
                 formData.append('message', messageText);
+                formData.append('thread_id', threadId);
                 $('#chatWindow').append('<div class="message-container user"><div class="message user-message">' + messageText + '</div><img src="static/User.png" class="avatar"></div>');
                 $('#messageInput').val('');
                 var loadingElementId = 'loadingMessage' + Date.now();
@@ -136,7 +189,7 @@
                         scrollToBottom();
                     }
                 });
-            });
+            }
 
             $('#fileUpload').on('change', function() {
                 var files = $(this).prop('files');
@@ -144,10 +197,32 @@
                     alert('Please select a file to upload.');
                     return;
                 }
-                processFiles(0, files);
+                var threadId = $('#threadId').val();
+                if (!threadId) {
+                    createNewThreadAndProcessFiles(files);
+                } else {
+                    processFiles(0, files, threadId);
+                }
             });
 
-            function processFiles(index, files) {
+            function createNewThreadAndProcessFiles(files) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/new-chat',
+                    success: function(response) {
+                        var threadId = response.thread_id;
+                        localStorage.setItem('current_thread_id', threadId);
+                        $('#threadId').val(threadId);
+                        processFiles(0, files, threadId);
+                        newChatPending = false;
+                    },
+                    error: function() {
+                        alert('Failed to start a new chat.');
+                    }
+                });
+            }
+
+            function processFiles(index, files, threadId) {
                 if (index >= files.length) {
                     return;
                 }
@@ -157,7 +232,7 @@
                 var formData = new FormData();
                 formData.append('file', file);
                 formData.append('message', predefinedMessage);
-                formData.append('thread_id', $('#threadId').val());
+                formData.append('thread_id', threadId);
                 var loadingElementId = 'loadingMessage' + Date.now();
                 var fileLoadingHtml = '<div id="' + loadingElementId + '" class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response"><img src="static/upload.gif" style="width:50px;height:50px;"> File Uploading...</div></div>';
                 $('#chatWindow').append(fileLoadingHtml);
@@ -174,37 +249,13 @@
                         $('#messageInput').val('');
                         $('#threadId').val(response.thread_id);
                         scrollToBottom();
-                        processFiles(index + 1, files);
+                        processFiles(index + 1, files, threadId);
                     },
                     error: function(xhr, status, error) {
                         $('#' + loadingElementId).remove();
                         $('#chatWindow').append('<div class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response">Failed to upload file.</div></div>');
                         scrollToBottom();
-                        processFiles(index + 1, files);
-                    }
-                });
-            }
-
-            function loadThread(threadId) {
-                $.ajax({
-                    type: 'GET',
-                    url: '/get-thread-messages',
-                    data: { thread_id: threadId },
-                    success: function(response) {
-                        if (response.messages) {
-                            $('#chatWindow').html(''); // Clear the chat window
-                            response.messages.forEach(function(msg) {
-                                var messageClass = msg.role === 'user' ? 'user-message' : 'bot-response';
-                                $('#chatWindow').append('<div class="message-container ' + msg.role + '"><img src="static/' + (msg.role === 'user' ? 'User.png' : 'blinksigns_logo.jpg') + '" class="avatar"><div class="message ' + messageClass + '">' + msg.content + '</div></div>');
-                            });
-                            $('#threadId').val(threadId); // Set the current thread ID
-                            scrollToBottom();
-                        } else {
-                            alert('Failed to load thread messages.');
-                        }
-                    },
-                    error: function() {
-                        alert('Failed to load thread messages.');
+                        processFiles(index + 1, files, threadId);
                     }
                 });
             }

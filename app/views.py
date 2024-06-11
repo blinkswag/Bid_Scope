@@ -7,6 +7,7 @@ from .validation import validate_password
 import bcrypt
 from openai import OpenAI
 import os
+import re
 
 db = Database()
 chat_controller = ChatController()
@@ -61,6 +62,9 @@ def init_app(app):
                     if not valid:
                         return jsonify({'error': error}), 400
             response = chat_controller.handle_message(files, message, thread_id)
+            if "error" in response['messages']:
+                return jsonify({'error': response['messages']}), 400
+            
             formatted_response = ''
             if message:
                 formatted_response = ''
@@ -73,7 +77,7 @@ def init_app(app):
                     formatted_response += f'<div class="message bot-response">{format_message_markdown(cleaned_bot_response)}</div>'
             return jsonify({'message': formatted_response, 'thread_id': response['thread_id']})
         return render_template('index.html', role=session.get('role'), username=session.get('username'), thread_ids=thread_ids)
-
+    
     @app.route('/edit-profile', methods=['GET', 'POST'])
     def edit_profile():
         if 'logged_in' not in session:
@@ -224,10 +228,14 @@ def init_app(app):
             messages = chat_controller.chat_model.get_threads_messages(thread_id)
             messages.reverse()
             response_messages = []
+            file_prefix_pattern = re.compile(r"From the file .*?:\s*")
             for message in messages:
+                formatted_content = remove_bracketed_content(message['content'][0]['text']['value'])
+                # Remove the file prefix using regex
+                formatted_content = file_prefix_pattern.sub("", formatted_content)
                 response_messages.append({
                     'role': message['role'],
-                    'content': remove_bracketed_content(format_message_markdown(message['content'][0]['text']['value']))
+                    'content': format_message_markdown(formatted_content)
                 })
             return jsonify({'messages': response_messages})
         except Exception as e:
@@ -236,3 +244,12 @@ def init_app(app):
     def format_message_markdown(message):
         html = markdown.markdown(message, extensions=['fenced_code', 'tables'])
         return html
+
+    @app.route('/new-chat', methods=['POST'])
+    def new_chat():
+        thread = chat_controller.chat_model.create_thread()
+        user_id = session.get('user_id')
+        db.update_user_threads(user_id, thread.id)
+        session.pop('uploaded_file_name', None)  # Clear the uploaded file name from session
+        return jsonify({'thread_id': thread.id})
+

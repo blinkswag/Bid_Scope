@@ -91,6 +91,24 @@ class Database:
         )
         return result.modified_count > 0
     
+    def update_user(self, user_id, username, email, role, password=None):
+        email = email.lower()
+        user = self.users_collection.find_one({"_id": ObjectId(user_id)})
+        if not user:
+            return False
+        updates = {"Username": username, "Email": email, "role": role}
+        if password:
+            valid, message = validate_password(password)
+            if not valid:
+                return message
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+            updates["Password"] = hashed_password
+        result = self.users_collection.update_one(
+            {"_id": ObjectId(user_id)},
+            {"$set": updates}
+        )
+        return result.modified_count > 0
+    
     def get_user_threads(self, user_id):
         user = self.get_user_by_id(user_id)
         if not user:
@@ -106,3 +124,4 @@ class Database:
                 thread['created_at'] = datetime.utcnow()
         
         return threads  # Return the threads as they are stored
+
