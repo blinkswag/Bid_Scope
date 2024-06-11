@@ -1,3 +1,4 @@
+# views.py
 from flask import render_template, request, jsonify, redirect, url_for, session, g
 from .controller.chat_controller import ChatController
 import markdown
@@ -41,6 +42,11 @@ def init_app(app):
             else:
                 return jsonify({'success': False, 'error': 'Invalid credentials'}), 401
         return render_template('login.html')
+
+    @app.route('/logout')
+    def logout():
+        session.clear()
+        return redirect(url_for('login'))
 
     @app.route('/', methods=['GET', 'POST'])
     def index():
@@ -252,4 +258,3 @@ def init_app(app):
         db.update_user_threads(user_id, thread.id)
         session.pop('uploaded_file_name', None)  # Clear the uploaded file name from session
         return jsonify({'thread_id': thread.id})
-
