@@ -66,22 +66,24 @@
             font-size: 12px;
         }
     </style>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
     <form class="login" id="loginForm">
         <input type="text" name="username" placeholder="Email" required>
         <input type="password" name="password" placeholder="Password" required>
+        <div class="g-recaptcha" data-sitekey="6LdhOwAqAAAAAJxu09NV0965kx5ZciwD5iTI5fgW"></div>
         <button type="submit">Login</button>
         <div id="errorMessage" class="error-message" style="display: none;"></div>
     </form>
-    <a href="https://codepen.io/davinci/" target="_blank">Check my other pens</a>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const loginForm = document.querySelector('.login');
             loginForm.addEventListener('submit', function(event) {
                 event.preventDefault();
                 const formData = new FormData(loginForm);
+                const recaptchaResponse = document.querySelector('.g-recaptcha-response').value;
+                formData.append('g-recaptcha-response', recaptchaResponse);
                 fetch('/login', {
                     method: 'POST',
                     body: formData

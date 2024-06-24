@@ -1,13 +1,13 @@
-# views.py
 from flask import render_template, request, jsonify, redirect, url_for, session, g
 from .controller.chat_controller import ChatController
-import markdown
 from .db import Database
 from .utils import validate_file, remove_bracketed_content, check_user_role
 from .validation import validate_password
 import bcrypt
 from openai import OpenAI
 import os
+import requests
+import markdown
 import re
 
 db = Database()
@@ -23,12 +23,26 @@ def init_app(app):
             g.user = None
         else:
             g.user = db.users_collection.find_one({"Email": user_email.lower()})
+        session.permanent = True  # Make the session permanent, so it uses the session lifetime
+
+    def verify_recaptcha(response):
+        secret_key = os.getenv('RECAPTCHA_SECRET_KEY', '6LdhOwAqAAAAAEl9dCDlm3J8Xy4mEN-2m0djQaRh')
+        payload = {'secret': secret_key, 'response': response}
+        r = requests.post('https://www.google.com/recaptcha/api/siteverify', data=payload)
+        return r.json()
 
     @app.route('/login', methods=['GET', 'POST'])
     def login():
         if request.method == 'POST':
             email = request.form['username'].lower()
             password = request.form['password']
+            recaptcha_response = request.form['g-recaptcha-response']
+
+            # Verify reCAPTCHA
+            recaptcha_result = verify_recaptcha(recaptcha_response)
+            if not recaptcha_result.get('success'):
+                return jsonify({'success': False, 'error': 'Invalid reCAPTCHA. Please try again.'}), 400
+
             if not email or not password:
                 return jsonify({'success': False, 'error': 'Email and password are required'}), 400
             if db.check_user_credentials(email, password):
@@ -38,10 +52,29 @@ def init_app(app):
                 session['role'] = user['role']
                 session['username'] = user['Username']
                 session['user_id'] = str(user['_id'])  # Store user_id in session
+                session.permanent = True  # Make the session permanent, so it uses the session lifetime
                 return jsonify({'success': True, 'email': email})
             else:
                 return jsonify({'success': False, 'error': 'Invalid credentials'}), 401
         return render_template('login.html')
+    # @app.route('/login', methods=['GET', 'POST'])
+    # def login():
+    #     if request.method == 'POST':
+    #         email = request.form['username'].lower()
+    #         password = request.form['password']
+    #         if not email or not password:
+    #             return jsonify({'success': False, 'error': 'Email and password are required'}), 400
+    #         if db.check_user_credentials(email, password):
+    #             user = db.users_collection.find_one({"Email": email})
+    #             session['email'] = email
+    #             session['logged_in'] = True
+    #             session['role'] = user['role']
+    #             session['username'] = user['Username']
+    #             session['user_id'] = str(user['_id'])  # Store user_id in session
+    #             return jsonify({'success': True, 'email': email})
+    #         else:
+    #             return jsonify({'success': False, 'error': 'Invalid credentials'}), 401
+    #     return render_template('login.html')
 
     @app.route('/logout')
     def logout():
