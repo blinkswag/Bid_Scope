@@ -1,0 +1,45 @@
+<!-- templates/403.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 Page Forbidden</title>
+    <link href="https://fonts.googleapis.com/css?family=Asap:400,500,600,700" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <style>
+        body {
+            background-color: #141414;
+            color: #fcc404;
+            font-family: 'Asap', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        h1 {
+            font-size: 6rem;
+        }
+        p {
+            font-size: 1.5rem;
+        }
+        a {
+            color: #fcc404;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>404</h1>
+        <p>Access Denied</p>
+        <p>Please ask your administrator to grant you access</p>
+    </div>
+</body>
+</html>

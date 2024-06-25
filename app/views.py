@@ -1,14 +1,14 @@
 from flask import render_template, request, jsonify, redirect, url_for, session, g
 from .controller.chat_controller import ChatController
+import markdown
 from .db import Database
 from .utils import validate_file, remove_bracketed_content, check_user_role
 from .validation import validate_password
 import bcrypt
 from openai import OpenAI
 import os
-import requests
-import markdown
 import re
+import requests
 
 db = Database()
 chat_controller = ChatController()
@@ -23,10 +23,9 @@ def init_app(app):
             g.user = None
         else:
             g.user = db.users_collection.find_one({"Email": user_email.lower()})
-        session.permanent = True  # Make the session permanent, so it uses the session lifetime
 
     def verify_recaptcha(response):
-        secret_key = os.getenv('RECAPTCHA_SECRET_KEY', '6LdhOwAqAAAAAEl9dCDlm3J8Xy4mEN-2m0djQaRh')
+        secret_key = '6LdhOwAqAAAAAEl9dCDlm3J8Xy4mEN-2m0djQaRh'
         payload = {'secret': secret_key, 'response': response}
         r = requests.post('https://www.google.com/recaptcha/api/siteverify', data=payload)
         return r.json()
@@ -38,7 +37,6 @@ def init_app(app):
             password = request.form['password']
             recaptcha_response = request.form['g-recaptcha-response']
 
-            # Verify reCAPTCHA
             recaptcha_result = verify_recaptcha(recaptcha_response)
             if not recaptcha_result.get('success'):
                 return jsonify({'success': False, 'error': 'Invalid reCAPTCHA. Please try again.'}), 400
@@ -51,30 +49,11 @@ def init_app(app):
                 session['logged_in'] = True
                 session['role'] = user['role']
                 session['username'] = user['Username']
-                session['user_id'] = str(user['_id'])  # Store user_id in session
-                session.permanent = True  # Make the session permanent, so it uses the session lifetime
+                session['user_id'] = str(user['_id'])
                 return jsonify({'success': True, 'email': email})
             else:
                 return jsonify({'success': False, 'error': 'Invalid credentials'}), 401
         return render_template('login.html')
-    # @app.route('/login', methods=['GET', 'POST'])
-    # def login():
-    #     if request.method == 'POST':
-    #         email = request.form['username'].lower()
-    #         password = request.form['password']
-    #         if not email or not password:
-    #             return jsonify({'success': False, 'error': 'Email and password are required'}), 400
-    #         if db.check_user_credentials(email, password):
-    #             user = db.users_collection.find_one({"Email": email})
-    #             session['email'] = email
-    #             session['logged_in'] = True
-    #             session['role'] = user['role']
-    #             session['username'] = user['Username']
-    #             session['user_id'] = str(user['_id'])  # Store user_id in session
-    #             return jsonify({'success': True, 'email': email})
-    #         else:
-    #             return jsonify({'success': False, 'error': 'Invalid credentials'}), 401
-    #     return render_template('login.html')
 
     @app.route('/logout')
     def logout():
@@ -137,8 +116,8 @@ def init_app(app):
                 updates["Password"] = hashed_password
             result = db.users_collection.update_one({"Email": current_user_email}, {"$set": updates})
             if result.modified_count > 0:
-                session['email'] = email  # Update session email if changed
-                session['username'] = username  # Update session username if changed
+                session['email'] = email
+                session['username'] = username
                 return redirect('/')
             else:
                 error_messages = ["Error updating profile"]
@@ -151,7 +130,8 @@ def init_app(app):
         current_user_email = session.get('email')
         users = list(db.get_all_users())
         filtered_users = [user for user in users if user['Email'] != current_user_email]
-        return render_template('manage_users.html', users=filtered_users, role=session.get('role'))
+        ips = list(db.get_all_ips())
+        return render_template('manage_users.html', users=filtered_users, ips=ips, role=session.get('role'))
 
     @app.route('/add-user', methods=['POST'])
     @check_user_role(['Super Admin', 'Admin'])
@@ -172,7 +152,8 @@ def init_app(app):
             current_user_email = session.get('email')
             users = list(db.get_all_users())
             filtered_users = [user for user in users if user['Email'] != current_user_email]
-            return render_template('manage_users.html', users=filtered_users, error_messages=error_messages, role=session.get('role'))
+            ips = list(db.get_all_ips())
+            return render_template('manage_users.html', users=filtered_users, ips=ips, error_messages=error_messages, role=session.get('role'))
 
     @app.route('/edit-user/<user_id>', methods=['POST'])
     @check_user_role(['Super Admin', 'Admin'])
@@ -196,7 +177,8 @@ def init_app(app):
             current_user_email = session.get('email')
             users = list(db.get_all_users())
             filtered_users = [user for user in users if user['Email'] != current_user_email]
-            return render_template('manage_users.html', users=filtered_users, error_messages=error_messages, role=session.get('role'))
+            ips = list(db.get_all_ips())
+            return render_template('manage_users.html', users=filtered_users, ips=ips, error_messages=error_messages, role=session.get('role'))
 
     @app.route('/delete-user/<user_id>', methods=['POST'])
     @check_user_role(['Super Admin', 'Admin'])
@@ -215,11 +197,24 @@ def init_app(app):
         else:
             return "Error deleting user", 400
 
+    @app.route('/add-ip', methods=['POST'])
+    @check_user_role(['Super Admin', 'Admin'])
+    def add_ip():
+        ip_address = request.form['ip_address']
+        tag = request.form['tag']
+        db.add_ip(ip_address, tag)
+        return redirect('/manage-users')
+
+    @app.route('/delete-ip/<ip_id>', methods=['POST'])
+    @check_user_role(['Super Admin', 'Admin'])
+    def delete_ip(ip_id):
+        db.delete_ip(ip_id)
+        return redirect('/manage-users')
+
     @app.route('/bot-settings', methods=['GET', 'POST'])
     @check_user_role(['Super Admin'])
     def bot_settings():
         if request.method == 'POST':
-            # Handle form submission
             update_data = {}
             if 'name' in request.form:
                 update_data['name'] = request.form['name']
@@ -244,6 +239,10 @@ def init_app(app):
     @app.errorhandler(401)
     def unauthorized(error):
         return render_template('401.html'), 401
+
+    @app.errorhandler(403)
+    def forbidden(error):
+        return render_template('403.html'), 403
 
     @app.errorhandler(404)
     def page_not_found(error):
@@ -270,7 +269,6 @@ def init_app(app):
             file_prefix_pattern = re.compile(r"From the file .*?:\s*")
             for message in messages:
                 formatted_content = remove_bracketed_content(message['content'][0]['text']['value'])
-                # Remove the file prefix using regex
                 formatted_content = file_prefix_pattern.sub("", formatted_content)
                 response_messages.append({
                     'role': message['role'],
@@ -289,5 +287,6 @@ def init_app(app):
         thread = chat_controller.chat_model.create_thread()
         user_id = session.get('user_id')
         db.update_user_threads(user_id, thread.id)
-        session.pop('uploaded_file_name', None)  # Clear the uploaded file name from session
+        session.pop('uploaded_file_name', None)
         return jsonify({'thread_id': thread.id})
+

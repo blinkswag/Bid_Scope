@@ -6,20 +6,20 @@ from dotenv import load_dotenv
 import os
 from .validation import validate_password
 from datetime import datetime
-# from .email_utils import send_invitation_email
 
 load_dotenv()
 
 class Database:
     def __init__(self):
-        connection_string= os.getenv('mongo_srv')
+        connection_string = os.getenv('mongo_srv')
         client = pymongo.MongoClient(connection_string, tlsCAFile=certifi.where())
 
         try:
-            client.server_info()  
+            client.server_info()
             self.db = client.Bid
             self.users_collection = self.db.Users
             self.threads_collection = self.db.Threads
+            self.ips_collection = self.db.IP
         except Exception as e:
             print(f"Failed to connect to the database: {e}")
             raise e
@@ -82,8 +82,8 @@ class Database:
             return False
 
         thread_ids = user.get('threads', [])
-        thread_ids = [t for t in thread_ids if t['id'] != thread_id]  # Remove the thread if it already exists
-        thread_ids.insert(0, {'id': thread_id, 'created_at': datetime.utcnow()})  # Add it to the top
+        thread_ids = [t for t in thread_ids if t['id'] != thread_id]
+        thread_ids.insert(0, {'id': thread_id, 'created_at': datetime.utcnow()})
 
         result = self.users_collection.update_one(
             {"_id": ObjectId(user_id)},
@@ -115,13 +115,23 @@ class Database:
             return []
         threads = user.get('threads', [])
         
-        # Provide a default value for created_at if it doesn't exist
         for thread in threads:
-            if isinstance(thread, str):  # handle old threads that are just strings
+            if isinstance(thread, str):
                 threads = [{'id': t, 'created_at': datetime.utcnow()} for t in threads]
                 break
             if 'created_at' not in thread:
                 thread['created_at'] = datetime.utcnow()
         
-        return threads  # Return the threads as they are stored
+        return threads
 
+    def get_all_ips(self):
+        return self.ips_collection.find()
+
+    def add_ip(self, ip_address, tag):
+        if self.ips_collection.find_one({"ip_address": ip_address}):
+            return "ip_exists"
+        self.ips_collection.insert_one({"ip_address": ip_address, "tag": tag})
+
+    def delete_ip(self, ip_id):
+        result = self.ips_collection.delete_one({"_id": ObjectId(ip_id)})
+        return result.deleted_count > 0
