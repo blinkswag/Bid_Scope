@@ -135,3 +135,7 @@ class Database:
     def delete_ip(self, ip_id):
         result = self.ips_collection.delete_one({"_id": ObjectId(ip_id)})
         return result.deleted_count > 0
+    
+    def get_allowed_ips(self):
+        ips = self.ip_collection.find({}, {"ip_address": 1, "_id": 0})
+        return [ip['ip_address'] for ip in ips]
