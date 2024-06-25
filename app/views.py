@@ -131,7 +131,7 @@ def init_app(app):
         users = list(db.get_all_users())
         filtered_users = [user for user in users if user['Email'] != current_user_email]
         ips = list(db.get_all_ips())
-        return render_template('manage_users.html', users=filtered_users, ips=ips, role=session.get('role'))
+        return render_template('manage_users.html', users=filtered_users, role=session.get('role'), ips=ips)
 
     @app.route('/add-user', methods=['POST'])
     @check_user_role(['Super Admin', 'Admin'])
@@ -202,14 +202,16 @@ def init_app(app):
     def add_ip():
         ip_address = request.form['ip_address']
         tag = request.form['tag']
-        db.add_ip(ip_address, tag)
-        return redirect('/manage-users')
+        result = db.add_ip(ip_address, tag)
+        if result == "ip_exists":
+            return redirect(url_for('manage_users', error_messages=["IP address already exists"]))
+        return redirect(url_for('manage_users'))
 
     @app.route('/delete-ip/<ip_id>', methods=['POST'])
     @check_user_role(['Super Admin', 'Admin'])
     def delete_ip(ip_id):
         db.delete_ip(ip_id)
-        return redirect('/manage-users')
+        return redirect(url_for('manage_users'))
 
     @app.route('/bot-settings', methods=['GET', 'POST'])
     @check_user_role(['Super Admin'])
