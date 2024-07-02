@@ -9,13 +9,18 @@ from openai import OpenAI
 import os
 import re
 import requests
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 db = Database()
 chat_controller = ChatController()
 client = OpenAI(api_key=os.getenv('API_KEY'))
 ASSISTANT_ID = os.getenv('ASSISTANT_ID')
 
-def init_app(app):
+def init_app(app, token_manager):
     @app.before_request
     def load_logged_in_user():
         user_email = session.get('email')
@@ -95,7 +100,7 @@ def init_app(app):
                     formatted_response += f'<div class="message bot-response">{format_message_markdown(cleaned_bot_response)}</div>'
             return jsonify({'message': formatted_response, 'thread_id': response['thread_id']})
         return render_template('index.html', role=session.get('role'), username=session.get('username'), thread_ids=thread_ids)
-    
+
     @app.route('/edit-profile', methods=['GET', 'POST'])
     def edit_profile():
         if 'logged_in' not in session:
@@ -291,4 +296,59 @@ def init_app(app):
         db.update_user_threads(user_id, thread.id)
         session.pop('uploaded_file_name', None)
         return jsonify({'thread_id': thread.id})
+    
+    # Zoho Desk
+    @app.route('/get_ticket_details', methods=['POST'])
+    def get_ticket_details():
+        data = request.get_json()
+        ticket_id = data.get('ticket_id')
 
+        if not ticket_id:
+            return jsonify({'error': 'Ticket ID is required'}), 400
+
+        try:
+            access_token = token_manager.get_access_token()
+            logger.debug(f"Using access token: {access_token}")
+
+            # Fetch ticket details
+            ticket_response = requests.get(
+                f'https://desk.zoho.com/api/v1/tickets/{ticket_id}',
+                headers={
+                    'Authorization': f'Bearer {access_token}',
+                    'Content-Type': 'application/json'
+                }
+            )
+
+            if ticket_response.ok:
+                ticket_details = ticket_response.json()
+                logger.debug(f"Ticket details fetched: {ticket_details}")
+                return jsonify(ticket_details)
+            else:
+                logger.error(f"Failed to fetch ticket details: {ticket_response.text}")
+                return jsonify({'error': 'Failed to fetch ticket details'}), 500
+
+        except Exception as e:
+            logger.error(f"Exception occurred while fetching ticket details: {str(e)}")
+            return jsonify({'error': str(e)}), 500
+        
+    @app.route('/add_comment_to_ticket', methods=['POST'])
+    def add_comment_to_ticket():
+        data = request.get_json()
+        ticket_id = data.get('ticket_id')
+        comment = data.get('comment')
+
+        try:
+            access_token = token_manager.get_access_token()
+
+            url = f"https://desk.zoho.com/api/v1/tickets/{ticket_id}/comments"
+            headers = {
+                'Authorization': f'Bearer {access_token}',
+                'Content-Type': 'application/json'
+            }
+            comment_data = {
+                'content': comment
+            }
+            response = requests.post(url, headers=headers, json=comment_data)
+            return jsonify(response.json())
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500

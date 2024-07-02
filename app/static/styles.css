@@ -1,24 +1,30 @@
-body, html {
+ body, html {
     height: 100%;
     margin: 0;
     font-family: 'Arial', sans-serif;
     background: #141414;
 }
+
 .main-container {
     display: flex;
     height: 100%;
 }
+
 .sidebar {
+    flex: 0 0 20%;
+    max-width: 20%;
+    background-color: #141414;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
-    padding: 20px;
-    background-color: #141414;
+    padding: 10px;
 }
+
 .sidebar .logout-button {
     margin-top: auto;
 }
+
 .chat-container {
     flex: 1;
     display: flex;
@@ -26,9 +32,10 @@ body, html {
     background: white;
     border-radius: 20px;
     box-shadow: 0 20px 25px rgba(0,0,0,0.1);
-    margin: 20px;
+    margin: 10px;
     padding: 10px;
 }
+
 .button-48 {
     appearance: none;
     background-color: #ffffff;
@@ -60,6 +67,7 @@ body, html {
     height: 70px;
     border-radius: 50px;
 }
+
 .button-48:before {
     animation: opacityFallbackOut .5s step-end forwards;
     backface-visibility: hidden;
@@ -78,29 +86,36 @@ body, html {
     width: 100%;
     border-radius: 50px;
 }
+
 .button-48:hover:before {
     animation: opacityFallbackIn 0s step-start forwards;
     clip-path: polygon(0 0, 101% 0, 101% 101%, 0 101%);
 }
+
 .button-48:after {
     background-color: #FFFFFF;
 }
+
 .button-48 span {
     z-index: 1;
     position: relative;
 }
+
 .user-info img {
     width: 50px;
     height: 50px;
     border-radius: 50%;
     margin-right: 15px;
 }
+
 .user-info h2 {
     margin: 0;
 }
+
 .user-info p {
     margin: 0;
 }
+
 #chatWindow {
     flex-grow: 1;
     overflow-y: auto;
@@ -109,12 +124,14 @@ body, html {
     border-top-right-radius: 8px;
     object-fit: cover;
 }
+
 .avatar {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     margin-right: 10px;
 }
+
 .message {
     padding: 10px 15px;
     border-radius: 20px;
@@ -122,6 +139,7 @@ body, html {
     max-width: 100%;
     font-size: 15px;
 }
+
 .user-message {
     background-color: #fcc404;
     color: black;
@@ -134,18 +152,21 @@ body, html {
     border-radius: 20px;
     max-width: 50%;
 }
+
 .bot-response {
     background-color: #363636;
     color: #d8d6d6;
-    align-self: flex-start;  
+    align-self: flex-start;
     border-radius: 20px 20px 20px 0;
     font-size: 15px;
     max-width: 80%;
 }
+
 .input-group {
     display: flex;
     align-items: center;
 }
+
 input[type="text"] {
     flex: 1;
     padding: 7px;
@@ -153,10 +174,12 @@ input[type="text"] {
     border-radius: 8px;
     margin-right: 10px;
 }
+
 input[type="text"]:focus-visible {
     outline: none;
     border-color: #050505;
 }
+
 .btn {
     width: 80px;
     padding: 5px 10px;
@@ -167,30 +190,25 @@ input[type="text"]:focus-visible {
     border: none;
     cursor: pointer;
 }
-.file-icon {
-    height: 20px;
-    width: auto;
-    cursor: pointer;
-}
-.file-icon:hover {
-    transform: scale(1.5);
-}
+
 #fileUploadForm {
     display: flex;
     align-items: center;
     justify-content: start;
     gap: 10px;
 }
+
 label[for="fileUpload"] {
     background: none;
     border: none;
     cursor: pointer;
 }
+
 .cssbuttons-io-button {
     width: 200px;
     height: 50px;
     background: #f9b904;
-    color: 141414;
+    color: #141414;
     font-family: inherit;
     font-size: 15px;
     font-weight: 600;
@@ -205,43 +223,52 @@ label[for="fileUpload"] {
     justify-content: left;
     padding-left: 10px;
 }
+
 .cssbuttons-io-button .icon {
     background: #141414;
     position: absolute;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     border-radius: 0.7em;
     right: 0.3em;
     transition: all 0.3s;
 }
+
 .cssbuttons-io-button:hover .icon {
     width: calc(100% - 0.6em);
 }
+
 .cssbuttons-io-button .icon svg {
     width: 1.1em;
     transition: transform 0.3s;
     color: #f9b904;
 }
+
 .cssbuttons-io-button .icon img {
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
 }
+
 .cssbuttons-io-button:hover .icon svg {
     transform: translateX(0.1em);
 }
+
 .cssbuttons-io-button:active .icon {
     transform: scale(0.95);
 }
+
 .btn:hover {
     background-color: #5a6268;
 }
+
 label[for="fileUpload"] {
     background: none;
     border: none;
 }
+
 .chat-btn {
     color: white;
     border: none;
@@ -253,20 +280,25 @@ label[for="fileUpload"] {
     margin-bottom: 0px;
     cursor: pointer;
 }
+
 .chat-btn:hover {
     background-color: #ffffff;
 }
+
 .btn:active {
     background-color: #ffffff;
 }
+
 .btn i {
     font-size: 1.2rem;
 }
+
 .fas.fa-spinner {
     color: #000000;
     font-size: 24px;
     animation: spin 1s linear infinite;
 }
+
 #loadingMessage {
     display: flex;
     justify-content: center;
@@ -276,37 +308,58 @@ label[for="fileUpload"] {
     font-weight: bold;
     margin: 10px 0;
 }
+
 #loadingMessage i {
     margin-right: 10px;
     font-size: 24px;
     animation: spin 2s linear infinite;
 }
+
 #loadingMessage img {
     display: block;
     margin: 10px auto;
     width: 50px;
     height: auto;
 }
+
 @keyframes spin {
     100% {
         transform: rotate(360deg);
     }
 }
+
 .file-icon {
     cursor: pointer;
     height: 50px;
     width: auto;
     transition: transform 0.2s;
 }
+
 .send-button {
     height: 43px;
+    width: 43px;
+    display: flex;
     align-items: center;
-    padding: 0 20px;
+    justify-content: center;
+    padding: 5px;
     color: #ffffff;
 }
+
 .file-icon:hover {
-    transform: scale(1.1);
+    transform: scale(1.2);
 }
+
+.zoho-icon {
+    cursor: pointer;
+    height: 40px;
+    width: auto;
+    transition: transform 0.2s;
+}
+
+.zoho-icon:hover {
+    transform: scale(1.2);
+}
+
 input[type="file"] {
     width: 0.1px;
     height: 0.1px;
@@ -315,9 +368,11 @@ input[type="file"] {
     position: absolute;
     z-index: -1;
 }
+
 #uploadFileBtn {
     margin-left: 10px;
 }
+
 .button-28 {
     appearance: none;
     background-color: transparent;
@@ -346,19 +401,23 @@ input[type="file"] {
     font-weight: 500;
     margin-left: 20px;
 }
+
 .button-28:disabled {
     pointer-events: none;
 }
+
 .button-28:hover {
     color: #fff;
     background-color: #f9b904;
     box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
     transform: translateY(-2px);
 }
+
 .button-28:active {
     box-shadow: none;
     transform: translateY(0);
 }
+
 .button {
     display: block;
     background-color: #c0392b;
@@ -374,6 +433,7 @@ input[type="file"] {
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
     transition: all 0.25s cubic-bezier(0.310, -0.105, 0.430, 1.400);
 }
+
 .button span,
 .button .icon {
     display: block;
@@ -382,6 +442,7 @@ input[type="file"] {
     position: absolute;
     top: 0;
 }
+
 .button span {
     width: 72%;
     line-height: inherit;
@@ -391,6 +452,7 @@ input[type="file"] {
     left: 0;
     transition: all 0.25s cubic-bezier(0.310, -0.105, 0.430, 1.400);
 }
+
 .button span::after {
     content: '';
     background-color: #a53125;
@@ -400,57 +462,73 @@ input[type="file"] {
     top: 15%;
     right: -0.5px;
 }
+
 .button .icon {
     width: 28%;
     right: 0;
     transition: all 0.25s cubic-bezier(0.310, -0.105, 0.430, 1.400);
 }
+
 .button .icon .fa {
     font-size: 15px;
     vertical-align: middle;
     transition: all 0.25s ease, height 0.25s ease;
 }
+
 .button .icon .fa-remove {
     height: 18px;
 }
+
 .button .icon .fa-check {
     display: none;
 }
+
 .button.success,
 .button:hover {
     background-color: #610000;
 }
+
 .button.success .icon .fa-remove {
     display: none;
 }
+
 .button.success .icon .fa-check {
     display: inline-block;
 }
+
 .button:hover span {
     left: -72%;
     opacity: 0;
 }
+
 .button:hover .icon {
     width: 100%;
 }
+
 .button:hover .icon .fa {
     font-size: 22.5px;
 }
+
 .button:hover .icon .fa-remove {
     height: 23px;
 }
+
 .button:hover {
     opacity: .9;
 }
+
 .button:active {
     opacity: 1;
 }
+
 h3 {
     color: #fcc404;
 }
+
 h6 {
     color: #ffffff;
 }
+
 .btn-3 {
     background: #fcc504;
     border: 1px solid #141414;
@@ -463,6 +541,7 @@ h6 {
     height: 40px;
     color: #141414;
 }
+
 .btn-3:hover {
     background: #141414;
     border: 1px solid rgba(0, 0, 0, .05);
@@ -499,9 +578,6 @@ h6 {
     transform: scale(1.05);
 }
 
-/* Modification */
-/* Updated styles for user and bot messages */
-/* Updated styles for user and bot messages */
 .message-container {
     display: flex;
     align-items: flex-start;
@@ -557,60 +633,352 @@ h6 {
     font-size: 14px;
     margin: 0;
 }
-/* Updated styles for user and bot messages */
-.message-container {
+
+.modal-body {
+    text-align: center;
+}
+
+.modal-body img {
+    width: 100px;
+    margin-bottom: 20px;
+}
+
+.modal-body h3, .modal-body p {
+    margin: 10px 0;
+}
+
+.modal-content {
+    border-radius: 15px;
+    background-color: black;
+    color: white;
+}
+
+.modal-header, .modal-footer {
+    border: none;
+    background-color: black;
+    color: white;
+}
+
+.btn-icon {
+    display: inline-block;
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 5px;
+    margin-left: 5px;
+}
+
+.btn-icon img {
+    width: 30px;
+    height: 30px;
+}
+
+.input-group {
     display: flex;
-    align-items: flex-start;
-    margin-bottom: 10px;
+    align-items: center;
 }
 
-.message-container.user {
-    justify-content: flex-end;
+.btn-primary, .btn-icon {
+    width: 50px;
+    height: 43px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 5px;
 }
 
-.message-container.bot {
-    justify-content: flex-start;
+.btn-close {
+    filter: invert(1);
 }
 
-.message-container img.avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-right: 10px;
+.comment-box {
+    margin-top: 20px;
+    text-align: left;
 }
 
-.message-container.user img.avatar {
-    margin-left: 10px;
-    margin-right: 0;
+.comment-box textarea {
+    width: 100%;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #333;
+    color: white;
+    border: none;
 }
 
-.message.user-message,
-.message.bot-response {
-    padding: 10px 15px;
-    border-radius: 20px;
-    max-width: 80%;
-    font-size: 15px;
+.comment-box button {
+    margin-top: 10px;
+    width: 100%;
 }
 
-.message.user-message {
-    background-color: #fcc404;
-    color: black;
-    align-self: flex-end;
-    margin-left: 10px;
+.alert {
+    display: none;
+    color: red;
+    margin-top: 10px;
 }
 
-.message.bot-response {
-    background-color: #363636;
-    color: #d8d6d6;
-    align-self: flex-start;
-    margin-right: 10px;
+.btn-icon {
+    display: inline-block;
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 5px;
+    margin-left: 5px;
+    height: 43px;
+    width: 43px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.message.loading {
-    background-color: #f0f0f0;
-    color: black;
-    align-self: center;
-    font-size: 14px;
+.btn-icon img {
+    width: 50px;
+    height: 50px;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+}
+
+.send-button {
+    height: 43px;
+    width: 43px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    background: rgb(72, 126, 191);
+    margin: 0 5px;
+}
+
+.btn-icon {
+    height: 50px;
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    background: none;
+    margin: 0 5px;
+}
+
+.zoho-icon {
+    width: 43px;
+    height: 43px;
+    margin: auto;
+    padding: 5px;
+}
+
+@media (max-width: 1200px) {
+    .sidebar {
+        flex: 0 0 25%;
+    }
+}
+
+@media (max-width: 992px) {
+    .sidebar {
+        flex: 0 0 30%;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        flex: 0 0 100%;
+    }
+
+    .main-container {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 576px) {
+    .chat-container {
+        padding: 5px;
+        margin: 10px;
+    }
+
+    .message {
+        font-size: 14px;
+    }
+
+    .btn {
+        padding: 5px 10px;
+        font-size: 14px;
+    }
+}
+
+.cssbuttons-io-button {
+    width: 90%; 
+    height: 60%;
+    max-width: 300px; 
+    max-height: 50px; 
+}
+
+
+
+.thread-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+
+button {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    outline: none;
+    border: 0;
+    vertical-align: middle;
+    text-decoration: none;
+    background: transparent;
+    padding: 0;
+    font-size: inherit;
+    font-family: inherit;
+  }
+  
+
+  button.learn-more {
+    width: 12rem;
+    height: 2.5rem; 
+    margin-bottom: 10px; 
+    padding-top: 5px; 
+    padding-left: 5px; 
+  }
+  
+  button.learn-more .circle {
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    box-shadow: 0 0 1px 1px white;
+    position: relative;
+    display: block;
     margin: 0;
-}
+    width: 2.5rem; 
+    height: 2.5rem; 
+    background: #fcc404;
+    border-radius: 1.625rem;
+  }
+  
+  button.learn-more .circle .icon {
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    background: #fff;
+  }
+  
+  button.learn-more .circle .icon.arrow {
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    left: 0.625rem;
+    width: 1.125rem;
+    height: 0.125rem;
+    background: none;
+  }
+  
+  button.learn-more .circle .icon.arrow::before {
+    position: absolute;
+    content: "";
+    top: -0.29rem;
+    right: 0.0625rem;
+    width: 0.625rem;
+    height: 0.625rem;
+    border-top: 0.125rem solid #fff;
+    border-right: 0.125rem solid #fff;
+    transform: rotate(45deg);
+  }
+  
+  button.learn-more .button-text {
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.5rem 0; 
+    margin: 0 0 0 1.85rem;
+    color: white;
+    font-weight: 100;
+    line-height: 1.6;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 0.8rem; 
+  }
+  
+  button.learn-more:hover .circle {
+    width: 100%;
+    box-shadow: 0 0 3px 2px white;
+  }
+  
+  button.learn-more:hover .button-text {
+    transform: translate(-1.7rem, 0);
+    color: black; 
+  }
+  
+  button.learn-more:hover .circle .icon.arrow {
+    background: #fff;
+    transform: translate(8.7rem, 0);
+  }
+  
+  button.learn-more:active .circle .icon.arrow {
+    transform: translate(9.5rem, 0);
+    transition: all 0.3s;
+  }
+  
+  button.learn-more:active .circle {
+    transform: scale(0.9);
+    transition: all 0.3s;
+  }
+  
+  button.learn-more:hover .button-text {
+    color: black; 
+  }
+  
+  button.learn-more:active .button-text {
+    color: rgba(255, 255, 255, 0.459);
+  }
+  
+ 
+  .thread-container {
+    max-height: calc(100vh - 20rem); 
+    overflow-y: auto;
+    padding-right: 10px; 
+  }
+  
+  
+  .thread-container::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 3px;
+  }
+  
+  .thread-container::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+  }
+  
 
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px;
+    height: 100%;
+  }
+  
+  .main-container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .chat-container {
+    flex-grow: 1;
+    overflow: auto;
+  }
+
+   .logout-button {
+    width: 90%;
+    height: 100%;
+    max-width: 250px; 
+    max-height: 50px; 
+    padding: 10px 15px; 
+    margin-top: 10px; 
+  }

@@ -48,9 +48,16 @@
                     </div>
                 </button>
             {% endif %}
-            {% for i, thread in enumerate(thread_ids[:5]) %}
-                <button class="btn btn-3" onclick="loadThread('{{ thread.id }}')">Thread {{ i+1 }}</button>
-            {% endfor %}
+            <div class="thread-container">
+                {% for i, thread in enumerate(thread_ids) %}
+                    <button class="learn-more" onclick="loadThread('{{ thread.id }}')">
+                        <span aria-hidden="true" class="circle">
+                            <span class="icon arrow"></span>
+                        </span>
+                        <span class="button-text">Thread {{ i+1 }}</span>
+                    </button>
+                {% endfor %}
+            </div>
             <button class="button logout-button" onclick="logout()" role="button">
                 <span>Logout</span>
                 <div class="icon">
@@ -73,9 +80,50 @@
                 <input type="hidden" id="threadId" name="thread_id">
                 <input type="text" id="messageInput" class="form-control" placeholder="Type your message here..." required>
                 <button class="btn btn-primary send-button" type="submit" aria-label="Send"><i class="fas fa-paper-plane"></i></button>
+                <button type="button" class="btn-icon" onclick="openTicketPopup()" aria-label="Open Ticket Popup">
+                    <img src="/static/zoho_desk.png" alt="Ticket Icon" class="zoho-icon">
+                </button>
             </form>
         </div>
     </div>
+<!-- Ticket Popup Modal -->
+<div class="modal fade" id="ticketModal" tabindex="-1" aria-labelledby="ticketModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ticketModalLabel">Enter Ticket Number</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="ticketForm">
+                    <div class="mb-3">
+                        <label for="ticketNumber" class="form-label">Ticket Number</label>
+                        <input type="text" class="form-control" id="ticketNumber" required>
+                    </div>
+                    <button type="submit" class="btn btn-3" id="submitTicketBtn">Fetch Ticket Details</button>
+                </form>
+                <div id="ticketDetails" style="display: none;">
+                    <h3 id="ticketTitle">Title: N/A</h3>
+                    <p id="ticketClassification">Classification: N/A</p>
+                    <p id="ticketStatus">Status: N/A</p>
+                    <div class="comment-box">
+                        <textarea id="commentText" rows="3" placeholder="Enter your comment"></textarea>
+                        <button class="btn btn-secondary" onclick="submitComment()">Add Comment</button>
+                    </div>
+                </div>
+                <div class="alert" id="ticketAlert">Ticket Number Does Not Exist</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ticket Details Display -->
+<div id="ticketDetails" style="display: none;">
+    <h3 id="ticketTitle">Title: N/A</h3>
+    <p id="ticketClassification">Classification: N/A</p>
+    <p id="ticketStatus">Status: N/A</p>
+</div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -270,6 +318,113 @@
                 loadThread(threadId);
             });
         });
+
+        // Zoho Desk
+        document.addEventListener('DOMContentLoaded', function() {
+            const ticketForm = document.getElementById('ticketForm');
+            const ticketModal = new bootstrap.Modal(document.getElementById('ticketModal'));
+
+            ticketForm.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                const ticketNumber = document.getElementById('ticketNumber').value;
+                fetchTicketDetails(ticketNumber, ticketModal);
+            });
+
+            // Event listener for modal close event to remove the backdrop and clear the modal content
+            document.getElementById('ticketModal').addEventListener('hidden.bs.modal', function () {
+                const modalBackdrop = document.querySelector('.modal-backdrop');
+                if (modalBackdrop) {
+                    modalBackdrop.remove();
+                }
+                clearModalContent();
+            });
+        });
+
+        async function fetchTicketDetails(ticketId, ticketModal) {
+            try {
+                const response = await fetch('/get_ticket_details', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ ticket_id: ticketId })
+                });
+
+                if (response.ok) {
+                    const ticketDetails = await response.json();
+                    if (ticketDetails.id) {
+                        displayTicketDetails(ticketDetails, ticketModal);
+                    } else {
+                        document.getElementById('ticketAlert').style.display = 'block';
+                    }
+                } else {
+                    document.getElementById('ticketAlert').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error fetching ticket details:', error);
+                document.getElementById('ticketAlert').style.display = 'block';
+            }
+        }
+
+        function displayTicketDetails(ticketDetails, ticketModal) {
+            const titleElement = document.getElementById('ticketTitle');
+            const classificationElement = document.getElementById('ticketClassification');
+            const statusElement = document.getElementById('ticketStatus');
+            const detailsContainer = document.getElementById('ticketDetails');
+            const alertElement = document.getElementById('ticketAlert');
+
+            if (titleElement && classificationElement && statusElement && detailsContainer) {
+                titleElement.innerText = `Title: ${ticketDetails.subject || 'N/A'}`;
+                classificationElement.innerText = `Classification: ${ticketDetails.classification || 'N/A'}`;
+                statusElement.innerText = `Status: ${ticketDetails.statusType || 'N/A'}`;
+                detailsContainer.style.display = 'block';
+                alertElement.style.display = 'none';
+                ticketModal.show();
+            } else {
+                console.error('One or more elements for displaying ticket details are missing.');
+            }
+        }
+
+        function clearModalContent() {
+            document.getElementById('ticketNumber').value = '';
+            document.getElementById('ticketDetails').style.display = 'none';
+            document.getElementById('ticketAlert').style.display = 'none';
+            document.getElementById('commentText').value = '';
+        }
+
+        async function submitComment() {
+            const ticketId = document.getElementById('ticketNumber').value;
+            const comment = document.getElementById('commentText').value;
+            const accessToken = 'your_access_token';  // Replace this with the actual access token
+
+            try {
+                const response = await fetch('/add_comment_to_ticket', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ ticket_id: ticketId, comment: comment, access_token: accessToken })
+                });
+
+                if (response.ok) {
+                    alert('Comment added successfully');
+                    document.getElementById('commentText').value = '';
+                } else {
+                    alert('Failed to add comment');
+                }
+            } catch (error) {
+                console.error('Error adding comment:', error);
+                alert('Failed to add comment');
+            }
+        }
+
+        function openTicketPopup() {
+            const ticketModal = new bootstrap.Modal(document.getElementById('ticketModal'));
+            ticketModal.show();
+        }
+
     </script>
 </body>
 </html>
+

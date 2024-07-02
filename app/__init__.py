@@ -1,9 +1,12 @@
+# app/__init__.py
+
 from flask import Flask, request, render_template, session
 from flask_session import Session
 import os
 from datetime import timedelta
 from dotenv import load_dotenv
 from .db import Database
+from .token_manager import ZohoDeskTokenManager
 import logging
 
 load_dotenv()
@@ -17,6 +20,7 @@ def get_remote_address():
 def create_app():
     app = Flask(__name__)
     db = Database()
+    token_manager = ZohoDeskTokenManager(db.db)
 
     @app.before_request
     def limit_remote_addr():
@@ -34,7 +38,7 @@ def create_app():
     Session(app)
 
     from .views import init_app
-    init_app(app)
+    init_app(app, token_manager)
 
     return app
 
