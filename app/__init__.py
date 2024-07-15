@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from .db import Database
 from .token_manager import ZohoDeskTokenManager
 import logging
+from .services.ip_service import IPService
 
 load_dotenv()
 
@@ -24,7 +25,7 @@ def create_app():
 
     @app.before_request
     def limit_remote_addr():
-        allowed_ips = db.get_allowed_ips()
+        allowed_ips = IPService.get_allowed_ips()
         client_ip = get_remote_address()
         logging.info(f"Client IP: {client_ip}")
         if client_ip not in allowed_ips:
@@ -41,7 +42,3 @@ def create_app():
     init_app(app, token_manager)
 
     return app
-
-if __name__ == '__main__':
-    app = create_app()
-    app.run(host='0.0.0.0', port=5000)

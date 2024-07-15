@@ -293,13 +293,13 @@
             });
 
             deleteIpButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const ipId = this.getAttribute('data-id');
-                    deleteFormAction = `/delete-ip/${ipId}`;
-                    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-                    deleteModal.show();
-                });
+            button.addEventListener('click', function() {
+                const ipId = this.getAttribute('data-id');
+                deleteFormAction = `/delete-ip/${ipId}`;
+                const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+                deleteModal.show();
             });
+        });
 
             document.getElementById('confirmDelete').addEventListener('click', function() {
                 fetch(deleteFormAction, {

@@ -1,7 +1,7 @@
 import re
 from flask import redirect, url_for, session
 from functools import wraps
-from .db import Database
+from app.db import Database
 
 db = Database()
 ALLOWED_EXTENSIONS = {'pdf', 'docx', 'txt'}
