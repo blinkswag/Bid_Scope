@@ -5,6 +5,7 @@ import logging
 from app.model.chat_model import ChatModel
 from app.db import Database
 from bson import ObjectId
+from app.utils.helpers import remove_bracketed_content
 
 logger = logging.getLogger(__name__)
 db = Database()
@@ -14,6 +15,8 @@ def init_zoho_views(app, token_manager):
     def get_ticket_details():
         data = request.get_json()
         ticket_id = data.get('ticket_id')
+        current_thread_id = data.get('current_thread_id')
+        username = data.get('username')
 
         if not ticket_id:
             return jsonify({'error': 'Ticket ID is required'}), 400
@@ -43,21 +46,26 @@ def init_zoho_views(app, token_manager):
                 user = db.users_collection.find_one({"_id": ObjectId(user_id)})
                 thread_ids = user.get('threads', [])
 
-                if thread_ids:
+                if not current_thread_id and thread_ids:
                     current_thread_id = thread_ids[0]['id']
-                    result = db.threads_collection.update_one(
-                        {"thread_id": current_thread_id},
-                        {"$set": {"name": ticket_title}}
-                    )
-                    logger.info(f"Updated thread {current_thread_id} with title {ticket_title}")
-                else:
+                elif not current_thread_id:
                     chat_model = ChatModel(db=db)
                     thread = chat_model.create_thread(name=ticket_title)
                     db.update_user_threads(user_id, thread.id)
                     current_thread_id = thread.id
                     logger.info(f"Created new thread {current_thread_id} for user {user_id}")
 
-                return jsonify({'thread_id': current_thread_id, 'ticket_details': ticket_details})
+                if current_thread_id:
+                    result = db.threads_collection.update_one(
+                        {"thread_id": current_thread_id},
+                        {"$set": {"name": ticket_title}}
+                    )
+                    logger.info(f"Updated thread {current_thread_id} with title {ticket_title}")
+
+                # Fetch the last bot response from the current thread
+                last_bot_response = fetch_last_bot_response(current_thread_id, username)
+
+                return jsonify({'thread_id': current_thread_id, 'ticket_details': ticket_details, 'last_bot_response': last_bot_response})
             else:
                 logger.error(f"Failed to fetch ticket details: {ticket_response.text}")
                 return jsonify({'error': 'Failed to fetch ticket details'}), 500
@@ -65,7 +73,6 @@ def init_zoho_views(app, token_manager):
         except Exception as e:
             logger.error(f"Exception occurred while fetching ticket details: {str(e)}")
             return jsonify({'error': str(e)}), 500
-
 
     @app.route('/add_comment_to_ticket', methods=['POST'])
     def add_comment_to_ticket():
@@ -88,3 +95,25 @@ def init_zoho_views(app, token_manager):
             return jsonify(response.json())
         except Exception as e:
             return jsonify({'error': str(e)}), 500
+
+    def fetch_last_bot_response(thread_id, username):
+        try:
+            chat_model = ChatModel(db=db)
+            messages = chat_model.get_threads_messages(thread_id)
+            for message in messages:
+                if message['role'] == 'assistant':
+                    # Remove bracketed content and format the response
+                    cleaned_message = remove_bracketed_content(message['content'][0]['text']['value'])
+                    formatted_message = format_message_as_html(cleaned_message)
+                    return f"{formatted_message}"
+        except Exception as e:
+            logger.error(f"Failed to fetch last bot response: {str(e)}")
+        return ''
+
+    def format_message_as_html(message):
+        if not message:
+            return ''
+        
+        # Replace markdown-style headers and lists with HTML formatting
+        return message.replace('### ', '<p>').replace('\n', '<br>')
+

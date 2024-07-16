@@ -83,18 +83,11 @@
                 </div>
             </div>
             <div id="suggestionContainer" class="suggestion-container" style="display: none;">
-                <button class="suggestion-btn" onclick="selectSuggestion('What is the budget range or cost estimate for this project?')">What is the budget range or cost estimate for this project?
-                    Accounts.</button>
                 <button class="suggestion-btn" onclick="selectSuggestion('What are the evaluation criteria for this bid?')">What are the evaluation criteria for this bid?</button>
-                <button class="suggestion-btn"
-                    onclick="selectSuggestion('Are there any specific terms and conditions we need to be aware of?')">Are there any specific terms and conditions we need to be aware of?
-                    Accounts.</button>
+                <button class="suggestion-btn" onclick="selectSuggestion('Are there any specific terms and conditions we need to be aware of?')">Are there any specific terms and conditions we need to be aware of?</button>
+                <button class="suggestion-btn" onclick="selectSuggestion('What is the budget range or cost estimate for this project?')">What is the budget range or cost estimate for this project?</button>
+                <button class="suggestion-btn" onclick="selectSuggestion('What is the typical timeline for completing this project and what factors might cause delays?')">What is the typical timeline for completing this project and what factors might cause delays?</button>
                 <button class="suggestion-btn" onclick="selectSuggestion('What are the pricing tiers for bulk orders, and are there any seasonal or promotional discounts available?')">What are the pricing tiers for bulk orders, and are there any seasonal or promotional discounts available?</button>
-
-                <button class="suggestion-btn" onclick="selectSuggestion('What is the typical timeline for completing this project and what factors might cause delays?')">What is the typical timeline for completing this project and what factors might cause delays?
-                    <!-- Accounts.</button>
-                <button class="suggestion-btn" onclick="selectSuggestion('Hi')">Hi
-                </button> -->
             </div>
             <form id="chatForm" class="input-group">
                 <label for="fileUpload" class="btn btn-light">
@@ -114,36 +107,36 @@
             </form>
         </div>
     </div>
-
-    <div class="modal fade" id="ticketModal" tabindex="-1" aria-labelledby="ticketModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="ticketModalLabel">Enter Ticket Number</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="ticketForm">
-                        <div class="mb-3">
-                            <!-- <label for="ticketNumber" class="form-label">Ticket Number</label> -->
-                            <input type="text" class="form-control" id="ticketNumber" required>
-                        </div>
-                        <button type="submit" class="btn btn-3" id="submitTicketBtn">Fetch Ticket Details</button>
-                    </form>
-                    <div id="ticketDetails" style="display: none;">
-                        <h3 id="ticketTitle">Title: N/A</h3>
-                        <p id="ticketClassification">Classification: N/A</p>
-                        <p id="ticketStatus">Status: N/A</p>
-                        <div class="comment-box">
-                            <textarea id="commentText" rows="3" placeholder="Enter your comment"></textarea>
-                            <button class="btn btn-secondary" onclick="submitComment()">Add Comment</button>
-                        </div>
+<!-- ticket modal -->
+<div class="modal fade" id="ticketModal" tabindex="-1" aria-labelledby="ticketModalLabel" aria-hidden="true">
+    <div class="modal-dialog custom-modal-width">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ticketModalLabel">Enter Ticket Number</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="ticketForm">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="ticketNumber" required>
                     </div>
-                    <div class="alert" id="ticketAlert" style="display: none;">Ticket Number Does Not Exist</div>
+                    <input type="hidden" id="currentThreadId">
+                    <button type="submit" class="btn btn-3" id="submitTicketBtn">Fetch Ticket Details</button>
+                </form>
+                <div id="ticketDetails" style="display: none;">
+                    <h3 id="ticketTitle">Title: N/A</h3>
+                    <p id="ticketClassification">Classification: N/A</p>
+                    <p id="ticketStatus">Status: N/A</p>
+                    <div class="comment-box">
+                        <textarea id="commentText" rows="3" placeholder="Enter your comment"></textarea>
+                        <button class="btn btn-secondary" onclick="submitComment()">Add Comment</button>
+                    </div>
                 </div>
+                <div class="alert" id="ticketAlert" style="display: none;">Ticket Number Does Not Exist</div>
             </div>
         </div>
     </div>
+</div>
 
     <!-- Ticket Details Display -->
     <div id="ticketDetails" style="display: none;">
@@ -408,153 +401,176 @@
         });
 
         // Zoho Desk
+
         document.addEventListener('DOMContentLoaded', function() {
-            const ticketForm = document.getElementById('ticketForm');
-            const ticketModal = new bootstrap.Modal(document.getElementById('ticketModal'));
+        const ticketForm = document.getElementById('ticketForm');
+        const ticketModal = new bootstrap.Modal(document.getElementById('ticketModal'));
+        const username = "{{ username }}"; // Pass the username from the backend
 
-            ticketForm.addEventListener('submit', function(event) {
-                event.preventDefault(); // Prevent default form submission
+        ticketForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
 
-                const ticketNumber = document.getElementById('ticketNumber').value;
-                fetchTicketDetails(ticketNumber, ticketModal);
-            });
-
-            // Event listener for modal close event to remove the backdrop and clear the modal content
-            document.getElementById('ticketModal').addEventListener('hidden.bs.modal', function() {
-                const modalBackdrop = document.querySelector('.modal-backdrop');
-                if (modalBackdrop) {
-                    modalBackdrop.remove();
-                }
-                clearModalContent();
-            });
+            const ticketNumber = document.getElementById('ticketNumber').value;
+            const currentThreadId = localStorage.getItem('current_thread_id'); // Get the current thread ID
+            fetchTicketDetails(ticketNumber, ticketModal, currentThreadId, username);
         });
 
-        async function fetchTicketDetails(ticketId, ticketModal) {
-            try {
-                const response = await fetch('/get_ticket_details', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ ticket_id: ticketId })
-                });
+        // Event listener for modal close event to remove the backdrop and clear the modal content
+        document.getElementById('ticketModal').addEventListener('hidden.bs.modal', function() {
+            const modalBackdrop = document.querySelector('.modal-backdrop');
+            if (modalBackdrop) {
+                modalBackdrop.remove();
+            }
+            clearModalContent();
+        });
+    });
 
-                if (response.ok) {
-                    const ticketDetails = await response.json();
-                    if (ticketDetails.ticket_details) {
-                        displayTicketDetails(ticketDetails.ticket_details, ticketModal, ticketDetails.thread_id);
-                    } else {
-                        document.getElementById('ticketAlert').style.display = 'block';
-                    }
+    async function fetchTicketDetails(ticketId, ticketModal, currentThreadId, username) {
+        try {
+            const response = await fetch('/get_ticket_details', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ticket_id: ticketId, current_thread_id: currentThreadId, username: username })
+            });
+
+            if (response.ok) {
+                const ticketDetails = await response.json();
+                if (ticketDetails.ticket_details) {
+                    displayTicketDetails(ticketDetails.ticket_details, ticketModal, ticketDetails.thread_id, ticketDetails.last_bot_response, username);
                 } else {
                     document.getElementById('ticketAlert').style.display = 'block';
                 }
-            } catch (error) {
-                console.error('Error fetching ticket details:', error);
+            } else {
                 document.getElementById('ticketAlert').style.display = 'block';
             }
+        } catch (error) {
+            console.error('Error fetching ticket details:', error);
+            document.getElementById('ticketAlert').style.display = 'block';
         }
+    }
 
-        function displayTicketDetails(ticketDetails, ticketModal, thread_id) {
-            const titleElement = document.getElementById('ticketTitle');
-            const classificationElement = document.getElementById('ticketClassification');
-            const statusElement = document.getElementById('ticketStatus');
-            const detailsContainer = document.getElementById('ticketDetails');
-            const alertElement = document.getElementById('ticketAlert');
+    function displayTicketDetails(ticketDetails, ticketModal, thread_id, last_bot_response, username) {
+        const titleElement = document.getElementById('ticketTitle');
+        const classificationElement = document.getElementById('ticketClassification');
+        const statusElement = document.getElementById('ticketStatus');
+        const detailsContainer = document.getElementById('ticketDetails');
+        const alertElement = document.getElementById('ticketAlert');
 
-            if (titleElement && classificationElement && statusElement && detailsContainer) {
-                titleElement.innerText = `Title: ${ticketDetails.subject || 'N/A'}`;
-                classificationElement.innerText = `Classification: ${ticketDetails.classification || 'N/A'}`;
-                statusElement.innerText = `Status: ${ticketDetails.statusType || 'N/A'}`;
-                detailsContainer.style.display = 'block';
-                alertElement.style.display = 'none';
-                ticketModal.show();
+        if (titleElement && classificationElement && statusElement && detailsContainer) {
+            titleElement.innerText = `Title: ${ticketDetails.subject || 'N/A'}`;
+            classificationElement.innerText = `Classification: ${ticketDetails.classification || 'N/A'}`;
+            statusElement.innerText = `Status: ${ticketDetails.statusType || 'N/A'}`;
+            detailsContainer.style.display = 'block';
+            alertElement.style.display = 'none';
+            ticketModal.show();
 
-                // Set the hidden fields with the thread ID and ticket title
-                document.getElementById('threadId').value = thread_id; // Set the thread ID
-                document.getElementById('ticketTitle').value = ticketDetails.subject || 'N/A';
+            // Set the hidden fields with the thread ID and ticket title
+            document.getElementById('threadId').value = thread_id; // Set the thread ID
+            document.getElementById('ticketTitle').value = ticketDetails.subject || 'N/A';
+
+            // Populate the comment box with the last bot response if available and format it
+            const commentText = document.getElementById('commentText');
+            const suffix = `Generated by ${username} through BID-BOT`;
+            const formattedResponse = formatResponse(last_bot_response);
+            commentText.value = last_bot_response ? `${formattedResponse}<br>${suffix}` : '';
+        } else {
+            console.error('One or more elements for displaying ticket details are missing.');
+        }
+    }
+
+    function formatResponse(response) {
+        // Replace the markdown-style headers and lists with HTML formatting
+        if (!response) return '';
+
+        return response
+            .replace(/### (.*?)\n/g, '<p>$1<br>')
+            .replace(/- \*\*(.*?)\*\*:/g, '<b>$1</b>:')
+            .replace(/- /g, '')
+            .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+            .replace(/\n\n/g, '</p><p>')
+            .replace(/\n/g, '<br>')
+            .concat('</p>');
+    }
+
+    function clearModalContent() {
+        document.getElementById('ticketNumber').value = '';
+        document.getElementById('ticketDetails').style.display = 'none';
+        document.getElementById('ticketAlert').style.display = 'none';
+        document.getElementById('commentText').value = '';
+    }
+
+    async function submitComment() {
+        const ticketId = document.getElementById('ticketNumber').value;
+        const comment = document.getElementById('commentText').value;
+
+        try {
+            const response = await fetch('/add_comment_to_ticket', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ticket_id: ticketId, comment: comment })
+            });
+
+            if (response.ok) {
+                alert('Comment added successfully');
+                document.getElementById('commentText').value = '';
             } else {
-                console.error('One or more elements for displaying ticket details are missing.');
-            }
-        }
-
-        function clearModalContent() {
-            document.getElementById('ticketNumber').value = '';
-            document.getElementById('ticketDetails').style.display = 'none';
-            document.getElementById('ticketAlert').style.display = 'none';
-            document.getElementById('commentText').value = '';
-        }
-
-        async function submitComment() {
-            const ticketId = document.getElementById('ticketNumber').value;
-            const comment = document.getElementById('commentText').value;
-
-            try {
-                const response = await fetch('/add_comment_to_ticket', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ ticket_id: ticketId, comment: comment })
-                });
-
-                if (response.ok) {
-                    alert('Comment added successfully');
-                    document.getElementById('commentText').value = '';
-                } else {
-                    alert('Failed to add comment');
-                }
-            } catch (error) {
-                console.error('Error adding comment:', error);
                 alert('Failed to add comment');
             }
+        } catch (error) {
+            console.error('Error adding comment:', error);
+            alert('Failed to add comment');
         }
+    }
 
-        function openTicketPopup() {
-            const ticketModal = new bootstrap.Modal(document.getElementById('ticketModal'));
-            ticketModal.show();
-        }
+    function openTicketPopup() {
+        const ticketModal = new bootstrap.Modal(document.getElementById('ticketModal'));
+        ticketModal.show();
+    }
 
-        function showSuggestions() {
-            const suggestionContainer = document.getElementById('suggestionContainer');
-            suggestionContainer.style.display = suggestionContainer.style.display === 'none' ? 'block' : 'none';
-        }
+    function showSuggestions() {
+        const suggestionContainer = document.getElementById('suggestionContainer');
+        suggestionContainer.style.display = suggestionContainer.style.display === 'none' ? 'block' : 'none';
+    }
 
-        function selectSuggestion(question) {
-            const messageInput = document.getElementById('messageInput');
-            messageInput.value = question;
-            const suggestionContainer = document.getElementById('suggestionContainer');
-            suggestionContainer.style.display = 'none';
+    function selectSuggestion(question) {
+        const messageInput = document.getElementById('messageInput');
+        messageInput.value = question;
+        const suggestionContainer = document.getElementById('suggestionContainer');
+        suggestionContainer.style.display = 'none';
 
-            // Trigger the form submission to send the selected suggestion as a message
-            $('#chatForm').submit();
-        }
+        // Trigger the form submission to send the selected suggestion as a message
+        $('#chatForm').submit();
+    }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const modal = document.getElementById('renameThreadModal');
-            const closeBtn = modal.querySelector('.close');
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('renameThreadModal');
+        const closeBtn = modal.querySelector('.close');
 
-            document.querySelectorAll('.open-rename-modal').forEach(button => {
-                button.addEventListener('click', function() {
-                    const threadId = this.getAttribute('data-id');
-                    const threadName = this.getAttribute('data-name');
-                    document.getElementById('renameThreadId').value = threadId;
-                    document.getElementById('renameThreadName').value = threadName;
-                    document.getElementById('deleteThreadId').value = threadId;
-                    modal.style.display = 'block';
-                });
-            });
-
-            closeBtn.addEventListener('click', function() {
-                modal.style.display = 'none';
-            });
-
-            window.addEventListener('click', function(event) {
-                if (event.target == modal) {
-                    modal.style.display = 'none';
-                }
+        document.querySelectorAll('.open-rename-modal').forEach(button => {
+            button.addEventListener('click', function() {
+                const threadId = this.getAttribute('data-id');
+                const threadName = this.getAttribute('data-name');
+                document.getElementById('renameThreadId').value = threadId;
+                document.getElementById('renameThreadName').value = threadName;
+                document.getElementById('deleteThreadId').value = threadId;
+                modal.style.display = 'block';
             });
         });
+
+        closeBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
     </script>
 </body>
 

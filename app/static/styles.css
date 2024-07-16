@@ -976,40 +976,6 @@ button {
     padding: 10px 15px; 
     margin-top: 10px; 
   }
-
-/* .suggestion-container {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: column;
-    align-items: flex-end; 
-    gap: 100px;
-    padding: 10px;
-    background-color: rgb(168, 143, 143);
-    border: transparent;
-    border-radius: 5px;
-    margin-top: 10px;
-    width: 40%;
-}
-
-.suggestion-btn {
-    background-color: #959595;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    padding: 10px 20px;
-    margin: 5px 0; /* Add margin for spacing between buttons */
-    /* margin-inline-start: 70%; 
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    font-size: 14px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    outline: none;
-}
-
-.suggestion-btn:hover {
-    background-color: #141414;
-    transform: scale(1.05);
-} */
 .suggestion-container {
     display: flex;
     flex-wrap: wrap;
@@ -1019,7 +985,7 @@ button {
     border: transparent;
     margin-top: 10px;
     border-radius: 20px;
-    width: 40%; /* Set width to 40% of parent container */
+    width: 100%; /* Set width to 40% of parent container */
     margin-left: auto; /* Align container to the right */
 }
 
@@ -1029,8 +995,8 @@ button {
     border: none;
     border-radius: 20px;
     padding: 10px 20px;
-    margin: 5px 0; /* Add margin for spacing between buttons */
-    width: 100%; /* Ensure buttons take the full width of the container */
+    margin: 8px 0; 
+    width: auto; 
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
     font-size: 14px;
@@ -1108,10 +1074,11 @@ background-color: #fefefe;
 margin: 15% auto;
 padding: 20px;
 border: 1px solid #888;
-width: 60%; /* Adjusted modal width */
+width: 50%; /* Adjusted modal width */
 border-radius: 10px;
 background-color: #141414;
 color: white;
+max-width: none;
 }
 
 .close {
@@ -1157,4 +1124,8 @@ color: #141414;
 #deleteThreadForm button {
 background-color: #ff4040;
 color: white;
+}
+
+.modal-dialog {
+    max-width: 80%; /* You can adjust this value as needed */
 }
