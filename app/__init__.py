@@ -1,5 +1,4 @@
-# app/__init__.py
-
+# __init__.py
 from flask import Flask, request, render_template, session
 from flask_session import Session
 import os
@@ -9,6 +8,8 @@ from .db import Database
 from .token_manager import ZohoDeskTokenManager
 import logging
 from .services.ip_service import IPService
+from .views import init_app
+from .views.bid_records import init_bid_records_views
 
 load_dotenv()
 
@@ -38,7 +39,7 @@ def create_app():
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
     Session(app)
 
-    from .views import init_app
     init_app(app, token_manager)
+    init_bid_records_views(app)
 
     return app

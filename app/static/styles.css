@@ -1,4 +1,4 @@
- body, html {
+body, html {
     height: 100%;
     margin: 0;
     font-family: 'Arial', sans-serif;
@@ -185,7 +185,7 @@ input[type="text"]:focus-visible {
     padding: 5px 10px;
     font-size: 16px;
     text-align: center;
-    background-color: #6c757d;
+    background-color: #141414;
     color: white;
     border: none;
     cursor: pointer;
@@ -204,64 +204,8 @@ label[for="fileUpload"] {
     cursor: pointer;
 }
 
-.cssbuttons-io-button {
-    width: 200px;
-    height: 50px;
-    background: #f9b904;
-    color: #141414;
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 600;
-    border-radius: 0.9em;
-    border: #fff;
-    letter-spacing: 0.05em;
-    display: flex;
-    align-items: center;
-    overflow: hidden;
-    position: relative;
-    cursor: pointer;
-    justify-content: left;
-    padding-left: 10px;
-}
-
-.cssbuttons-io-button .icon {
-    background: #141414;
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 0.7em;
-    right: 0.3em;
-    transition: all 0.3s;
-}
-
-.cssbuttons-io-button:hover .icon {
-    width: calc(100% - 0.6em);
-}
-
-.cssbuttons-io-button .icon svg {
-    width: 1.1em;
-    transition: transform 0.3s;
-    color: #f9b904;
-}
-
-.cssbuttons-io-button .icon img {
-    width: 40px;
-    height: 40px;
-}
-
-.cssbuttons-io-button:hover .icon svg {
-    transform: translateX(0.1em);
-}
-
-.cssbuttons-io-button:active .icon {
-    transform: scale(0.95);
-}
-
 .btn:hover {
-    background-color: #5a6268;
+    background-color: #141414;
 }
 
 label[for="fileUpload"] {
@@ -765,28 +709,6 @@ h6 {
     padding: 5px;
 }
 
-@media (max-width: 1200px) {
-    .sidebar {
-        flex: 0 0 25%;
-    }
-}
-
-@media (max-width: 992px) {
-    .sidebar {
-        flex: 0 0 30%;
-    }
-}
-
-@media (max-width: 768px) {
-    .sidebar {
-        flex: 0 0 100%;
-    }
-
-    .main-container {
-        flex-direction: column;
-    }
-}
-
 @media (max-width: 576px) {
     .chat-container {
         padding: 5px;
@@ -811,12 +733,6 @@ h6 {
 }
 
 
-
-.thread-container::-webkit-scrollbar {
-  width: 8px;
-}
-
-
 button {
     position: relative;
     display: inline-block;
@@ -829,18 +745,17 @@ button {
     padding: 0;
     font-size: inherit;
     font-family: inherit;
-  }
-  
+}
 
-  button.learn-more {
+button.learn-more {
     width: 12rem;
     height: 2.5rem; 
     margin-bottom: 10px; 
     padding-top: 5px; 
     padding-left: 5px; 
-  }
-  
-  button.learn-more .circle {
+}
+
+button.learn-more .circle {
     transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
     box-shadow: 0 0 1px 1px white;
     position: relative;
@@ -850,26 +765,26 @@ button {
     height: 2.5rem; 
     background: #fcc404;
     border-radius: 1.625rem;
-  }
-  
-  button.learn-more .circle .icon {
+}
+
+button.learn-more .circle .icon {
     transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
     position: absolute;
     top: 0;
     bottom: 0;
     margin: auto;
     background: #fff;
-  }
-  
-  button.learn-more .circle .icon.arrow {
+}
+
+button.learn-more .circle .icon.arrow {
     transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
     left: 0.625rem;
     width: 1.125rem;
     height: 0.125rem;
     background: none;
-  }
-  
-  button.learn-more .circle .icon.arrow::before {
+}
+
+button.learn-more .circle .icon.arrow::before {
     position: absolute;
     content: "";
     top: -0.29rem;
@@ -879,9 +794,9 @@ button {
     border-top: 0.125rem solid #fff;
     border-right: 0.125rem solid #fff;
     transform: rotate(45deg);
-  }
-  
-  button.learn-more .button-text {
+}
+
+button.learn-more .button-text {
     transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
     position: absolute;
     top: 0;
@@ -896,97 +811,74 @@ button {
     text-align: center;
     text-transform: uppercase;
     font-size: 0.6rem; 
-  }
-  
-  button.learn-more:hover .circle {
+}
+
+button.learn-more:hover .circle {
     width: 100%;
     box-shadow: 0 0 3px 2px white;
-  }
-  
-  button.learn-more:hover .button-text {
+}
+
+button.learn-more:hover .button-text {
     transform: translate(-1.7rem, 0);
     color: black; 
-  }
-  
-  button.learn-more:hover .circle .icon.arrow {
+}
+
+button.learn-more:hover .circle .icon.arrow {
     background: #fff;
     transform: translate(8.7rem, 0);
-  }
-  
-  button.learn-more:active .circle .icon.arrow {
+}
+
+button.learn-more:active .circle .icon.arrow {
     transform: translate(9.5rem, 0);
     transition: all 0.3s;
-  }
-  
-  button.learn-more:active .circle {
+}
+
+button.learn-more:active .circle {
     transform: scale(0.9);
     transition: all 0.3s;
-  }
-  
-  button.learn-more:hover .button-text {
-    color: black; 
-  }
-  
-  button.learn-more:active .button-text {
-    color: rgba(255, 255, 255, 0.459);
-  }
-  
- 
-  .thread-container {
-    max-height: calc(100vh - 20rem); 
-    overflow-y: auto;
-    padding-right: 10px; 
-  }
-  
-  
-  .thread-container::-webkit-scrollbar-thumb {
-    background-color: #888;
-    border-radius: 3px;
-  }
-  
-  .thread-container::-webkit-scrollbar-thumb:hover {
-    background-color: #555;
-  }
-  
+}
 
-  .sidebar {
+button.learn-more:hover .button-text {
+    color: black; 
+}
+
+button.learn-more:active .button-text {
+    color: rgba(255, 255, 255, 0.459);
+}
+
+
+
+.sidebar {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
     padding: 10px;
     height: 100%;
-  }
-  
-  .main-container {
+}
+
+.main-container {
     display: flex;
     height: 100vh;
-  }
-  
-  .chat-container {
+}
+
+.chat-container {
     flex-grow: 1;
     overflow: auto;
-  }
+}
 
-   .logout-button {
-    width: 90%;
-    height: 100%;
-    max-width: 250px; 
-    max-height: 50px; 
-    padding: 10px 15px; 
-    margin-top: 10px; 
-  }
+
 .suggestion-container {
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
-    align-items: flex-end; /* Align items to the right */
+    align-items: flex-end; 
     background-color: rgb(255, 255, 255);
     border: transparent;
     margin-top: 10px;
     border-radius: 20px;
-    width: 100%; /* Set width to 40% of parent container */
-    margin-left: auto; /* Align container to the right */
+    width: 100%; 
+    margin-left: auto; 
 }
 
 .suggestion-btn {
@@ -1074,7 +966,7 @@ background-color: #fefefe;
 margin: 15% auto;
 padding: 20px;
 border: 1px solid #888;
-width: 50%; /* Adjusted modal width */
+width: 50%;
 border-radius: 10px;
 background-color: #141414;
 color: white;
@@ -1095,7 +987,6 @@ text-decoration: none;
 cursor: pointer;
 }
 
-/* Form and button styles */
 #renameThreadForm, #deleteThreadForm {
 display: flex;
 align-items: center;
@@ -1104,7 +995,7 @@ margin-top: 10px;
 }
 
 #renameThreadName {
-width: 60%; /* Adjust input width */
+width: 60%; 
 padding: 10px;
 margin-right: 10px;
 }
@@ -1127,5 +1018,234 @@ color: white;
 }
 
 .modal-dialog {
-    max-width: 80%; /* You can adjust this value as needed */
+    max-width: 80%; 
+}
+.cssbuttons-io-button {
+
+    width: 16em;
+    height: 3em; 
+    background: #f9b904;
+    color: #141414;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 0.9em;
+    border: #fff;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    justify-content: left;
+    padding-left: 10px;
+}
+
+.cssbuttons-io-button .icon {
+    background: #141414;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5em;
+    height: 2.5em; 
+    border-radius: 0.7em;
+    right: 0.3em;
+    transition: all 0.3s;
+}
+
+.cssbuttons-io-button:hover .icon {
+    width: calc(100% - 0.6em);
+}
+
+.cssbuttons-io-button .icon svg {
+    width: 1.1em;
+    transition: transform 0.3s;
+    color: #f9b904;
+}
+
+.cssbuttons-io-button .icon img {
+    width: 36px; 
+    height: 36px; 
+}
+
+.cssbuttons-io-button:hover .icon svg {
+    transform: translateX(0.1em);
+}
+
+.cssbuttons-io-button:active .icon {
+    transform: scale(0.95);
+}
+
+.profile-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+.profile-details {
+    flex-grow: 1;
+}
+.edit-profile-icon {
+    cursor: pointer;
+    color: #fcc404;
+}
+.cssbuttons-io-button {
+    background-color: #141414;
+    border: 2px solid #fcc404;
+    color: #fcc404;
+    padding: 10px 20px;
+    margin: 10px 0;
+    width: 100%;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.cssbuttons-io-button .icon {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+}
+.icon-button {
+    background: none;
+    border: none;
+    color: #fcc404;
+    cursor: pointer;
+}
+.btn-theme {
+    background-color: #fcc404;
+    color: #ffffff;
+    width: 7%;
+}
+@media (max-width: 1200px) {
+    .sidebar {
+        flex: 0 0 25%;
+    }
+}
+
+@media (max-width: 992px) {
+    .sidebar {
+        flex: 0 0 30%;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        flex: 0 0 100%;
+    }
+
+    .main-container {
+        flex-direction: column;
+    }
+
+    .logout-button {
+        width: 60%;
+        position: relative;
+        bottom: 0;
+        left: 0;
+        margin: 20px 0;
+    }
+
+    .profile-section, .cssbuttons-io-button {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 576px) {
+    .chat-container {
+        padding: 5px;
+        margin: 10px;
+    }
+
+    .message {
+        font-size: 14px;
+    }
+
+    .btn {
+        padding: 5px 10px;
+        font-size: 14px;
+    }
+}
+.logout-button {
+    background-color: #141414;
+    border: 2px solid #fcc404;
+    color: #fcc404;
+    padding: 10px 20px;
+    width: 80%;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    height: 100%;
+    max-width: 250px; 
+    max-height: 50px; 
+    margin-top: 10px; 
+}
+
+
+/*  */
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background: #141414;
+}
+
+.main-container {
+    display: flex;
+    height: 100%;
+}
+
+.sidebar {
+    flex: 0 0 20%;
+    max-width: 20%;
+    background-color: #141414;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.sidebar .logout-button {
+    margin-top: auto;
+}
+
+.chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 25px rgba(0,0,0,0.1);
+    margin: 10px;
+    padding: 10px;
+}
+
+.thread-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    width: 100%;
+    max-height: calc(100vh - 20rem); 
+    overflow-y: auto;
+    padding-right: 10px; 
+}
+
+.thread-container::-webkit-scrollbar {
+    width: 5px;
+}
+
+.thread-container::-webkit-scrollbar-thumb {
+    background-color: #fcc404;
+    border-radius: 3px;
+}
+
+.thread-container::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
 }

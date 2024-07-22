@@ -18,6 +18,8 @@ class Database:
             self.users_collection = self.db.Users
             self.threads_collection = self.db.Threads
             self.ips_collection = self.db.IP
+            self.bid_records_collection = self.db.Bid_records
+            self.counter_collection = self.db.counter
         except Exception as e:
             print(f"Failed to connect to the database: {e}")
             raise e
@@ -48,6 +50,7 @@ class Database:
             {"$set": {"threads": thread_ids}}
         )
         return result.modified_count > 0
+    
     def get_user_threads(self, user_id):
         user = self.users_collection.find_one({"_id": ObjectId(user_id)})
         thread_ids = [thread['id'] for thread in user.get('threads', [])]

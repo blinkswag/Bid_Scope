@@ -7,6 +7,7 @@ from app.views.chat import init_chat_views
 from app.views.error import init_error_views
 from app.views.bot_settings import init_bot_settings_views
 from app.views.zoho import init_zoho_views
+from app.views.bid_records import init_bid_records_views
 
 def init_app(app, token_manager):
     init_auth_views(app)
@@ -14,4 +15,5 @@ def init_app(app, token_manager):
     init_chat_views(app)
     init_error_views(app)
     init_bot_settings_views(app)
+    init_bid_records_views(app)
     init_zoho_views(app, token_manager)

@@ -73,6 +73,22 @@ $(document).ready(function() {
             }
         });
     }
+    function handleResize() {
+        if ($(window).width() < 768) {
+            // Adjust for small screens
+            $('.main-container').css('flex-direction', 'column');
+            $('.sidebar').css('flex', '0 0 100%');
+            $('.chat-container').css('margin', '5px');
+        } else {
+            // Adjust for larger screens
+            $('.main-container').css('flex-direction', 'row');
+            $('.sidebar').css('flex', '0 0 25%');
+            $('.chat-container').css('margin', '10px');
+        }
+    }
+
+    $(window).resize(handleResize);
+    handleResize();
 
     function scrollToBottom() {
         $('#chatWindow').animate({ scrollTop: $('#chatWindow')[0].scrollHeight }, 1000);

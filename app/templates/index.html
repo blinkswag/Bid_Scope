@@ -16,58 +16,69 @@
     <div class="main-container">
         <div class="sidebar">
             <div>
-                <h3>{{ username }}</h3>
-                <h6>{{ role }}</h6>
-            </div>
-            <button class="cssbuttons-io-button" onclick="prepareNewChat()">
-                <span class="button-text">New Chat</span>
-                <div class="icon">
-                    <svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M0 0h24v24H0z" fill="none"></path>
-                        <path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z" fill="currentColor"></path>
-                    </svg>
-                </div>
-            </button>
-            {% if role in ['Super Admin', 'Admin'] %}
-            <button class="cssbuttons-io-button" onclick="window.location.href='/manage-users'">
-                <span class="button-text">Manage Users</span>
-                <div class="icon">
-                    <img src="/static/manage_users.png" alt="Manage Users Icon">
-                </div>
-            </button>
-            {% endif %}
-            <button class="cssbuttons-io-button" onclick="window.location.href='/edit-profile'">
-                <span class="button-text">Edit Profile</span>
-                <div class="icon">
-                    <img src="/static/edit_profile.png" alt="Edit Profile Icon">
-                </div>
-            </button>
-            {% if role == 'Super Admin' %}
-            <button class="cssbuttons-io-button" onclick="window.location.href='/bot-settings'">
-                <span class="button-text">Bot Settings</span>
-                <div class="icon">
-                    <img src="/static/favicon.png" alt="Settings Icon">
-                </div>
-            </button>
-            {% endif %}
-            <div class="thread-container">
-                {% for thread in threads %}
-                <div class="thread">
-                    <button class="learn-more load-thread" data-thread-id="{{ thread.id }}">
-                        <span aria-hidden="true" class="circle">
-                            <span class="icon arrow"></span>
-                        </span>
-                        <span class="button-text">{{ thread.name }}</span>
-                    </button>
-                    <span class="icon-container">
-                        <button class="icon-button open-rename-modal" data-id="{{ thread.id }}" data-name="{{ thread.name }}">
+                <div class="profile-section">
+                    <div class="profile-details">
+                        <h3>{{ username }}</h3>
+                        <h6>{{ role }}</h6>
+                    </div>
+                    <div>
+                        <a href="/edit-profile" class="edit-profile-icon">
                             <i class="fas fa-edit"></i>
-                        </button>
-                    </span>
+                        </a>
+                    </div>
                 </div>
-                {% endfor %}
+                <button class="cssbuttons-io-button" onclick="prepareNewChat()">
+                    <span class="button-text">New Chat</span>
+                    <div class="icon">
+                        <svg height="24" width="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z" fill="currentColor"></path>
+                        </svg>
+                    </div>
+                </button>
+                {% if role in ['Super Admin', 'Admin'] %}
+                <button class="cssbuttons-io-button" onclick="window.location.href='/manage-users'">
+                    <span class="button-text">Manage Users</span>
+                    <div class="icon">
+                        <img src="/static/manage_users.png" alt="Manage Users Icon">
+                    </div>
+                </button>
+                {% endif %}
+                {% if role == 'Super Admin' %}
+                <button class="cssbuttons-io-button" onclick="window.location.href='/bot-settings'">
+                    <span class="button-text">Bot Settings</span>
+                    <div class="icon">
+                        <img src="/static/favicon.png" alt="Settings Icon">
+                    </div>
+                </button>
+                {% endif %}
+                <!-- Add Bid Records button -->
+                {% if role in ['Super Admin', 'Admin'] %}
+                <button class="cssbuttons-io-button" onclick="window.location.href='/bid-records'">
+                    <span class="button-text">Bid Stats</span>
+                    <div class="icon">
+                        <img src="/static/bid.png" alt="Bid Records Icon">
+                    </div>
+                </button>
+                {% endif %}
+                <div class="thread-container">
+                    {% for thread in threads %}
+                    <div class="thread">
+                        <button class="learn-more load-thread" data-thread-id="{{ thread.id }}">
+                            <span aria-hidden="true" class="circle">
+                                <span class="icon arrow"></span>
+                            </span>
+                            <span class="button-text">{{ thread.name }}</span>
+                        </button>
+                        <span class="icon-container">
+                            <button class="icon-button open-rename-modal" data-id="{{ thread.id }}" data-name="{{ thread.name }}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
-                    
             <button class="button logout-button" onclick="logout()" role="button">
                 <span>Logout</span>
                 <div class="icon">
@@ -95,10 +106,9 @@
                     <input type="file" id="fileUpload" multiple style="display: none;">
                 </label>
                 <input type="hidden" id="threadId" name="thread_id">
-                <input type="text" id="messageInput" class="form-control" placeholder="Type your message here..."
-                    required>
-                <button class="btn btn-primary send-button" type="submit"><i class="fas fa-paper-plane"></i></button>
-                <button type="button" class="btn-icon" onclick="showSuggestions()">
+                <input type="text" id="messageInput" class="form-control" placeholder="Type your message here..." required>
+                <button class="btn btn-theme send-button" type="submit"><i class="fas fa-paper-plane"></i></button>
+                <button type="button" class="btn-icon" onclick="showSuggestions()" aria-label="Open Suggestions">
                     <img src="/static/suggestion.png" alt="Suggestions Icon" class="suggestion-icon">
                 </button>
                 <button type="button" class="btn-icon" onclick="openTicketPopup()" aria-label="Open Ticket Popup">
@@ -107,36 +117,36 @@
             </form>
         </div>
     </div>
-<!-- ticket modal -->
-<div class="modal fade" id="ticketModal" tabindex="-1" aria-labelledby="ticketModalLabel" aria-hidden="true">
-    <div class="modal-dialog custom-modal-width">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="ticketModalLabel">Enter Ticket Number</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="ticketForm">
-                    <div class="mb-3">
-                        <input type="text" class="form-control" id="ticketNumber" required>
-                    </div>
-                    <input type="hidden" id="currentThreadId">
-                    <button type="submit" class="btn btn-3" id="submitTicketBtn">Fetch Ticket Details</button>
-                </form>
-                <div id="ticketDetails" style="display: none;">
-                    <h3 id="ticketTitle">Title: N/A</h3>
-                    <p id="ticketClassification">Classification: N/A</p>
-                    <p id="ticketStatus">Status: N/A</p>
-                    <div class="comment-box">
-                        <textarea id="commentText" rows="3" placeholder="Enter your comment"></textarea>
-                        <button class="btn btn-secondary" onclick="submitComment()">Add Comment</button>
-                    </div>
+    <!-- ticket modal -->
+    <div class="modal fade" id="ticketModal" tabindex="-1" aria-labelledby="ticketModalLabel" aria-hidden="true">
+        <div class="modal-dialog custom-modal-width">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ticketModalLabel">Enter Ticket Number</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="alert" id="ticketAlert" style="display: none;">Ticket Number Does Not Exist</div>
+                <div class="modal-body">
+                    <form id="ticketForm">
+                        <div class="mb-3">
+                            <input type="text" class="form-control" id="ticketNumber" required>
+                        </div>
+                        <input type="hidden" id="currentThreadId">
+                        <button type="submit" class="btn btn-3" id="submitTicketBtn">Fetch Ticket Details</button>
+                    </form>
+                    <div id="ticketDetails" style="display: none;">
+                        <h3 id="ticketTitle">Title: N/A</h3>
+                        <p id="ticketClassification">Classification: N/A</p>
+                        <p id="ticketStatus">Status: N/A</p>
+                        <div class="comment-box">
+                            <textarea id="commentText" rows="3" placeholder="Enter your comment"></textarea>
+                            <button class="btn btn-secondary" onclick="submitComment()">Add Comment</button>
+                        </div>
+                    </div>
+                    <div class="alert" id="ticketAlert" style="display: none;">Ticket Number Does Not Exist</div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <!-- Ticket Details Display -->
     <div id="ticketDetails" style="display: none;">
@@ -144,7 +154,7 @@
         <p id="ticketClassification">Classification: N/A</p>
         <p id="ticketStatus">Status: N/A</p>
     </div>
-    
+
     <div id="renameThreadModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -170,12 +180,12 @@
             $.ajax({
                 type: 'GET',
                 url: '/logout',
-                success: function () {
+                success: function() {
                     localStorage.removeItem('logged_in');
                     localStorage.removeItem('email');
                     window.location.href = '/login';
                 },
-                error: function () {
+                error: function() {
                     alert('Failed to logout.');
                 }
             });
@@ -193,11 +203,13 @@
             $.ajax({
                 type: 'GET',
                 url: '/get-thread-messages',
-                data: { thread_id: threadId },
-                success: function (response) {
+                data: {
+                    thread_id: threadId
+                },
+                success: function(response) {
                     if (response.messages) {
                         $('#chatWindow').html(''); // Clear the chat window
-                        response.messages.forEach(function (msg) {
+                        response.messages.forEach(function(msg) {
                             var messageClass = msg.role === 'user' ? 'user-message' : 'bot-response';
                             $('#chatWindow').append('<div class="message-container ' + msg.role + '"><img src="static/' + (msg.role === 'user' ? 'User.png' : 'blinksigns_logo.jpg') + '" class="avatar"><div class="message ' + messageClass + '">' + msg.content + '</div></div>');
                         });
@@ -208,7 +220,7 @@
                         alert('Failed to load thread messages.');
                     }
                 },
-                error: function () {
+                error: function() {
                     alert('Failed to load thread messages.');
                 }
             });
@@ -257,7 +269,7 @@
             });
 
             // Add click event to thread buttons
-            $('body').on('click', '.load-thread', function () {
+            $('body').on('click', '.load-thread', function() {
                 var threadId = $(this).data('thread-id');
                 loadThread(threadId);
             });
@@ -279,14 +291,14 @@
             $.ajax({
                 type: 'POST',
                 url: '/new-chat',
-                success: function (response) {
+                success: function(response) {
                     var threadId = response.thread_id;
                     localStorage.setItem('current_thread_id', threadId);
                     $('#threadId').val(threadId);
                     sendMessage(messageText, threadId);
                     newChatPending = false;
                 },
-                error: function () {
+                error: function() {
                     alert('Failed to start a new chat.');
                 }
             });
@@ -308,12 +320,12 @@
                 data: formData,
                 processData: false,
                 contentType: false,
-                success: function (response) {
+                success: function(response) {
                     $('#' + loadingElementId).remove();
                     $('#chatWindow').append('<div class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response">' + response.message + '</div></div>');
                     scrollToBottom();
                 },
-                error: function () {
+                error: function() {
                     $('#' + loadingElementId).remove();
                     $('#chatWindow').append('<div class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response">Failed to send message.</div></div>');
                     scrollToBottom();
@@ -321,7 +333,7 @@
             });
         }
 
-        $('#fileUpload').on('change', function () {
+        $('#fileUpload').on('change', function() {
             var files = $(this).prop('files');
             if (files.length === 0) {
                 alert('Please select a file to upload.');
@@ -339,14 +351,14 @@
             $.ajax({
                 type: 'POST',
                 url: '/new-chat',
-                success: function (response) {
+                success: function(response) {
                     var threadId = response.thread_id;
                     localStorage.setItem('current_thread_id', threadId);
                     $('#threadId').val(threadId);
                     processFiles(0, files, threadId);
                     newChatPending = false;
                 },
-                error: function () {
+                error: function() {
                     alert('Failed to start a new chat.');
                 }
             });
@@ -373,7 +385,7 @@
                 data: formData,
                 processData: false,
                 contentType: false,
-                success: function (response) {
+                success: function(response) {
                     $('#' + loadingElementId).remove();
                     $('#chatWindow').append('<div class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response">' + response.message + '</div></div>');
                     $('#messageInput').val('');
@@ -381,7 +393,7 @@
                     scrollToBottom();
                     processFiles(index + 1, files, threadId);
                 },
-                error: function (xhr, status, error) {
+                error: function(xhr, status, error) {
                     $('#' + loadingElementId).remove();
                     $('#chatWindow').append('<div class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response">Failed to upload file.</div></div>');
                     scrollToBottom();
@@ -391,119 +403,115 @@
         }
 
         function scrollToBottom() {
-            $('#chatWindow').animate({ scrollTop: $('#chatWindow')[0].scrollHeight }, 1000);
+            $('#chatWindow').animate({
+                scrollTop: $('#chatWindow')[0].scrollHeight
+            }, 1000);
         }
 
         // Add click event to thread buttons
-        $('body').on('click', '.load-thread', function () {
+        $('body').on('click', '.load-thread', function() {
             var threadId = $(this).data('thread-id');
             loadThread(threadId);
         });
-
         // Zoho Desk
 
         document.addEventListener('DOMContentLoaded', function() {
-        const ticketForm = document.getElementById('ticketForm');
-        const ticketModal = new bootstrap.Modal(document.getElementById('ticketModal'));
-        const username = "{{ username }}"; // Pass the username from the backend
+            const ticketForm = document.getElementById('ticketForm');
+            const ticketModal = new bootstrap.Modal(document.getElementById('ticketModal'));
+            const username = "{{ username }}"; // Pass the username from the backend
 
-        ticketForm.addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent default form submission
+            ticketForm.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent default form submission
 
-            const ticketNumber = document.getElementById('ticketNumber').value;
-            const currentThreadId = localStorage.getItem('current_thread_id'); // Get the current thread ID
-            fetchTicketDetails(ticketNumber, ticketModal, currentThreadId, username);
-        });
-
-        // Event listener for modal close event to remove the backdrop and clear the modal content
-        document.getElementById('ticketModal').addEventListener('hidden.bs.modal', function() {
-            const modalBackdrop = document.querySelector('.modal-backdrop');
-            if (modalBackdrop) {
-                modalBackdrop.remove();
-            }
-            clearModalContent();
-        });
-    });
-
-    async function fetchTicketDetails(ticketId, ticketModal, currentThreadId, username) {
-        try {
-            const response = await fetch('/get_ticket_details', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ ticket_id: ticketId, current_thread_id: currentThreadId, username: username })
+                const ticketNumber = document.getElementById('ticketNumber').value;
+                const currentThreadId = localStorage.getItem('current_thread_id'); // Get the current thread ID
+                fetchTicketDetails(ticketNumber, ticketModal, currentThreadId, username);
             });
 
-            if (response.ok) {
-                const ticketDetails = await response.json();
-                if (ticketDetails.ticket_details) {
-                    displayTicketDetails(ticketDetails.ticket_details, ticketModal, ticketDetails.thread_id, ticketDetails.last_bot_response, username);
+            // Event listener for modal close event to remove the backdrop and clear the modal content
+            document.getElementById('ticketModal').addEventListener('hidden.bs.modal', function() {
+                const modalBackdrop = document.querySelector('.modal-backdrop');
+                if (modalBackdrop) {
+                    modalBackdrop.remove();
+                }
+                clearModalContent();
+            });
+        });
+
+        async function fetchTicketDetails(ticketId, ticketModal, currentThreadId, username) {
+            try {
+                const response = await fetch('/get_ticket_details', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        ticket_id: ticketId,
+                        current_thread_id: currentThreadId,
+                        username: username
+                    })
+                });
+
+                if (response.ok) {
+                    const ticketDetails = await response.json();
+                    if (ticketDetails.ticket_details) {
+                        displayTicketDetails(ticketDetails.ticket_details, ticketModal, ticketDetails.thread_id, ticketDetails.last_bot_response, username);
+                    } else {
+                        document.getElementById('ticketAlert').style.display = 'block';
+                    }
                 } else {
                     document.getElementById('ticketAlert').style.display = 'block';
                 }
-            } else {
+            } catch (error) {
+                console.error('Error fetching ticket details:', error);
                 document.getElementById('ticketAlert').style.display = 'block';
             }
-        } catch (error) {
-            console.error('Error fetching ticket details:', error);
-            document.getElementById('ticketAlert').style.display = 'block';
         }
-    }
 
-    function displayTicketDetails(ticketDetails, ticketModal, thread_id, last_bot_response, username) {
-        const titleElement = document.getElementById('ticketTitle');
-        const classificationElement = document.getElementById('ticketClassification');
-        const statusElement = document.getElementById('ticketStatus');
-        const detailsContainer = document.getElementById('ticketDetails');
-        const alertElement = document.getElementById('ticketAlert');
+        function displayTicketDetails(ticketDetails, ticketModal, thread_id, last_bot_response, username) {
+            const titleElement = document.getElementById('ticketTitle');
+            const classificationElement = document.getElementById('ticketClassification');
+            const statusElement = document.getElementById('ticketStatus');
+            const detailsContainer = document.getElementById('ticketDetails');
+            const alertElement = document.getElementById('ticketAlert');
 
-        if (titleElement && classificationElement && statusElement && detailsContainer) {
-            titleElement.innerText = `Title: ${ticketDetails.subject || 'N/A'}`;
-            classificationElement.innerText = `Classification: ${ticketDetails.classification || 'N/A'}`;
-            statusElement.innerText = `Status: ${ticketDetails.statusType || 'N/A'}`;
-            detailsContainer.style.display = 'block';
-            alertElement.style.display = 'none';
-            ticketModal.show();
+            if (titleElement && classificationElement && statusElement && detailsContainer) {
+                titleElement.innerText = `Title: ${ticketDetails.subject || 'N/A'}`;
+                classificationElement.innerText = `Classification: ${ticketDetails.classification || 'N/A'}`;
+                statusElement.innerText = `Status: ${ticketDetails.statusType || 'N/A'}`;
+                detailsContainer.style.display = 'block';
+                alertElement.style.display = 'none';
+                ticketModal.show();
 
-            // Set the hidden fields with the thread ID and ticket title
-            document.getElementById('threadId').value = thread_id; // Set the thread ID
-            document.getElementById('ticketTitle').value = ticketDetails.subject || 'N/A';
+                // Set the hidden fields with the thread ID and ticket title
+                document.getElementById('threadId').value = thread_id; // Set the thread ID
+                document.getElementById('ticketTitle').value = ticketDetails.subject || 'N/A';
 
-            // Populate the comment box with the last bot response if available and format it
-            const commentText = document.getElementById('commentText');
-            const suffix = `Generated by ${username} through BID-BOT`;
-            const formattedResponse = formatResponse(last_bot_response);
-            commentText.value = last_bot_response ? `${formattedResponse}<br>${suffix}` : '';
-        } else {
-            console.error('One or more elements for displaying ticket details are missing.');
+                // Populate the comment box with the last bot response if available and format it
+                const commentText = document.getElementById('commentText');
+                commentText.value = last_bot_response ? formatForDisplay(last_bot_response) : '';
+            } else {
+                console.error('One or more elements for displaying ticket details are missing.');
+            }
         }
-    }
 
-    function formatResponse(response) {
-        // Replace the markdown-style headers and lists with HTML formatting
-        if (!response) return '';
+        function formatForDisplay(response) {
+            // Replace HTML tags with readable text format
+            return response
+                .replace(/<br>/g, '\n')
+                .replace(/<\/?p>/g, '')
+                .replace(/<\/?b>/g, '**')
+                .replace(/<\/?ul>/g, '')
+                .replace(/<\/?li>/g, '- ')
+                .replace(/<\/?ol>/g, '');
+        }
 
-        return response
-            .replace(/### (.*?)\n/g, '<p>$1<br>')
-            .replace(/- \*\*(.*?)\*\*:/g, '<b>$1</b>:')
-            .replace(/- /g, '')
-            .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
-            .replace(/\n\n/g, '</p><p>')
-            .replace(/\n/g, '<br>')
-            .concat('</p>');
-    }
-
-    function clearModalContent() {
-        document.getElementById('ticketNumber').value = '';
-        document.getElementById('ticketDetails').style.display = 'none';
-        document.getElementById('ticketAlert').style.display = 'none';
-        document.getElementById('commentText').value = '';
-    }
-
-    async function submitComment() {
+        async function submitComment() {
         const ticketId = document.getElementById('ticketNumber').value;
-        const comment = document.getElementById('commentText').value;
+        let comment = document.getElementById('commentText').value;
+
+        // Convert the comment to Zoho format before submission
+        comment = convertToZohoFormat(comment);
 
         try {
             const response = await fetch('/add_comment_to_ticket', {
@@ -511,66 +519,92 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ ticket_id: ticketId, comment: comment })
+                body: JSON.stringify({
+                    ticket_id: ticketId,
+                    comment: comment
+                })
             });
 
             if (response.ok) {
                 alert('Comment added successfully');
                 document.getElementById('commentText').value = '';
+
+                // Increment and update the comment count
+                const commentCountElement = document.getElementById('commentCount');
+                const currentCount = parseInt(commentCountElement.innerText.replace('Number of Comments: ', ''), 10);
+                commentCountElement.innerText = `Number of Comments: ${currentCount + 1}`;
             } else {
                 alert('Failed to add comment');
             }
         } catch (error) {
             console.error('Error adding comment:', error);
-            alert('Failed to add comment');
+            // alert('Failed to add comment');
         }
     }
+        function convertToZohoFormat(message) {
+            if (!message) return '';
 
-    function openTicketPopup() {
-        const ticketModal = new bootstrap.Modal(document.getElementById('ticketModal'));
-        ticketModal.show();
-    }
+            return message
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/\n/g, '<br>')
+                .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                .replace(/- /g, '<li>')
+                .replace(/<\/li>/g, '</li></ul>')
+                .concat('</p>');
+        }
 
-    function showSuggestions() {
-        const suggestionContainer = document.getElementById('suggestionContainer');
-        suggestionContainer.style.display = suggestionContainer.style.display === 'none' ? 'block' : 'none';
-    }
+        function clearModalContent() {
+            document.getElementById('ticketNumber').value = '';
+            document.getElementById('ticketDetails').style.display = 'none';
+            document.getElementById('ticketAlert').style.display = 'none';
+            document.getElementById('commentText').value = '';
+        }
 
-    function selectSuggestion(question) {
-        const messageInput = document.getElementById('messageInput');
-        messageInput.value = question;
-        const suggestionContainer = document.getElementById('suggestionContainer');
-        suggestionContainer.style.display = 'none';
+        function openTicketPopup() {
+            const ticketModal = new bootstrap.Modal(document.getElementById('ticketModal'));
+            ticketModal.show();
+        }
 
-        // Trigger the form submission to send the selected suggestion as a message
-        $('#chatForm').submit();
-    }
+        function showSuggestions() {
+            const suggestionContainer = document.getElementById('suggestionContainer');
+            suggestionContainer.style.display = suggestionContainer.style.display === 'none' ? 'block' : 'none';
+        }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const modal = document.getElementById('renameThreadModal');
-        const closeBtn = modal.querySelector('.close');
+        function selectSuggestion(question) {
+            const messageInput = document.getElementById('messageInput');
+            messageInput.value = question;
+            const suggestionContainer = document.getElementById('suggestionContainer');
+            suggestionContainer.style.display = 'none';
 
-        document.querySelectorAll('.open-rename-modal').forEach(button => {
-            button.addEventListener('click', function() {
-                const threadId = this.getAttribute('data-id');
-                const threadName = this.getAttribute('data-name');
-                document.getElementById('renameThreadId').value = threadId;
-                document.getElementById('renameThreadName').value = threadName;
-                document.getElementById('deleteThreadId').value = threadId;
-                modal.style.display = 'block';
+            // Trigger the form submission to send the selected suggestion as a message
+            $('#chatForm').submit();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('renameThreadModal');
+            const closeBtn = modal.querySelector('.close');
+
+            document.querySelectorAll('.open-rename-modal').forEach(button => {
+                button.addEventListener('click', function() {
+                    const threadId = this.getAttribute('data-id');
+                    const threadName = this.getAttribute('data-name');
+                    document.getElementById('renameThreadId').value = threadId;
+                    document.getElementById('renameThreadName').value = threadName;
+                    document.getElementById('deleteThreadId').value = threadId;
+                    modal.style.display = 'block';
+                });
+            });
+
+            closeBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+
+            window.addEventListener('click', function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
             });
         });
-
-        closeBtn.addEventListener('click', function() {
-            modal.style.display = 'none';
-        });
-
-        window.addEventListener('click', function(event) {
-            if (event.target == modal) {
-                modal.style.display = 'none';
-            }
-        });
-    });
     </script>
 </body>
 
