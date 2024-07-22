@@ -1,18 +1,24 @@
-// scripts.js
-function showSuggestions() {
-    const suggestionContainer = document.getElementById('suggestionContainer');
-    suggestionContainer.style.display = suggestionContainer.style.display === 'none' ? 'block' : 'none';
-}
-
-function selectSuggestion(suggestion) {
-    const messageInput = document.getElementById('messageInput');
-    messageInput.value = suggestion;
-    const suggestionContainer = document.getElementById('suggestionContainer');
-    suggestionContainer.style.display = 'none';
-}
-
-// Existing functions for chat functionality
 $(document).ready(function() {
+    function adjustThreadContainerHeight() {
+        const sidebarHeight = $('.sidebar').height();
+        const profileSectionHeight = $('.profile-section').outerHeight(true);
+        const logoutButtonHeight = $('.logout-button').outerHeight(true);
+        let buttonHeights = 0;
+
+        // Calculate the total height of all cssbuttons-io-button elements
+        $('.cssbuttons-io-button').each(function() {
+            buttonHeights += $(this).outerHeight(true);
+        });
+
+        const availableHeight = sidebarHeight - (profileSectionHeight + logoutButtonHeight + buttonHeights + 40); // Adjust for padding/margin
+        $('.thread-container').css('height', availableHeight + 'px');
+    }
+
+    // Adjust height on page load and window resize
+    adjustThreadContainerHeight();
+    $(window).resize(adjustThreadContainerHeight);
+
+    // Existing functions for chat functionality
     $('#chatForm').submit(function(event) {
         event.preventDefault();
         var messageText = $('#messageInput').val();
@@ -73,18 +79,30 @@ $(document).ready(function() {
             }
         });
     }
+
     function handleResize() {
         if ($(window).width() < 768) {
             // Adjust for small screens
             $('.main-container').css('flex-direction', 'column');
-            $('.sidebar').css('flex', '0 0 100%');
+            $('.sidebar').css('width', '100%');
             $('.chat-container').css('margin', '5px');
-        } else {
-            // Adjust for larger screens
+        } else if ($(window).width() < 992) {
+            // Adjust for medium screens
+            $('.sidebar').css('width', '30%');
             $('.main-container').css('flex-direction', 'row');
-            $('.sidebar').css('flex', '0 0 25%');
+            $('.chat-container').css('margin', '10px');
+        } else if ($(window).width() < 1200) {
+            // Adjust for large screens
+            $('.sidebar').css('width', '25%');
+            $('.main-container').css('flex-direction', 'row');
+            $('.chat-container').css('margin', '10px');
+        } else {
+            // Adjust for extra large screens
+            $('.sidebar').css('width', '20%');
+            $('.main-container').css('flex-direction', 'row');
             $('.chat-container').css('margin', '10px');
         }
+        adjustThreadContainerHeight();
     }
 
     $(window).resize(handleResize);

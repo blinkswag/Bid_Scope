@@ -52,7 +52,6 @@
                     </div>
                 </button>
                 {% endif %}
-                <!-- Add Bid Records button -->
                 {% if role in ['Super Admin', 'Admin'] %}
                 <button class="cssbuttons-io-button" onclick="window.location.href='/bid-records'">
                     <span class="button-text">Bid Stats</span>
@@ -158,7 +157,6 @@
     <div id="renameThreadModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <!-- <h2>Rename Thread</h2> -->
             <form id="renameThreadForm">
                 <input type="hidden" id="renameThreadId" name="thread_id">
                 <input type="text" id="renameThreadName" name="new_name" placeholder="New thread name">

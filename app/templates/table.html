@@ -1,4 +1,3 @@
-<!-- table.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,17 +10,17 @@
     <title>Bid Records</title>
     <style>
         body {
-            padding: 20px;
             background-color: #000000;
             color: white;
+            overflow-x: hidden;
         }
         .container {
             background: #141414;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
-            margin-left: 180px; /* Adjust to make space for the sidebar */
-            margin-right:20px ;
+            margin-top: 20px;
+            margin-left: 200px; /* Adjust to make space for the sidebar */
         }
         h1, h2, h3 {
             color: #fcc404;
@@ -70,7 +69,7 @@
             top: 0;
             left: 0;
             height: 100%;
-            width: 180px;
+            width: 200px;
             background-color: #141414;
             display: flex;
             flex-direction: column;
@@ -96,6 +95,17 @@
         }
         .back-button {
             text-align: center;
+        }
+        @media (max-width: 767.98px) {
+            .container {
+                margin-left: 0;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                box-shadow: none;
+            }
         }
     </style>
 </head>
