@@ -13,6 +13,13 @@
             background-color: #000000;
             color: white;
             overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Poppins', sans-serif;
+        }
+        .main-content {
+            display: flex;
+            flex: 1;
         }
         .container {
             background: #141414;
@@ -20,7 +27,11 @@
             border-radius: 8px;
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
             margin-top: 20px;
-            margin-left: 200px; /* Adjust to make space for the sidebar */
+            flex-grow: 1;
+            width: 100%;
+            max-width: calc(100% - 220px); /* Adjust for the sidebar width */
+            margin-left: 220px; /* Offset by the sidebar width */
+            margin-right: 20px;
         }
         h1, h2, h3 {
             color: #fcc404;
@@ -77,6 +88,7 @@
             padding-top: 20px;
             padding-bottom: 20px;
             box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            z-index: 1000;
         }
         .sidebar a {
             padding: 15px 20px;
@@ -99,6 +111,7 @@
         @media (max-width: 767.98px) {
             .container {
                 margin-left: 0;
+                max-width: 100%;
             }
             .sidebar {
                 width: 100%;
@@ -122,35 +135,38 @@
             </a>
         </div>
     </div>
-    <div class="container mt-5">
-        <table id="bidRecordsTable" class="table table-borderless">
-            <thead>
-                <tr>
-                    <th>Subject</th>
-                    <th>Classification</th>
-                    <th>Status</th>
-                    <th>Qualification</th>
-                    <th>Bid Type</th>
-                    <th>Product Category</th>
-                    <th>Category</th>
-                    <th>User</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for record in records %}
-                <tr>
-                    <td>{{ record.subject }}</td>
-                    <td>{{ record.classification }}</td>
-                    <td>{{ record.status }}</td>
-                    <td>{{ record.QUALIFICATION }}</td>
-                    <td>{{ record['Bid Type'] }}</td>
-                    <td>{{ record['Main Product Category'] }}</td>
-                    <td>{{ record.category }}</td>
-                    <td>{{ record.username }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="main-content">
+        <div class="container mt-5">
+            <br></br>
+            <table id="bidRecordsTable" class="table table-borderless">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Classification</th>
+                        <th>Status</th>
+                        <th>Qualification</th>
+                        <th>Bid Type</th>
+                        <th>Product Category</th>
+                        <th>Category</th>
+                        <th>User</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                    <tr>
+                        <td>{{ record.subject }}</td>
+                        <td>{{ record.classification }}</td>
+                        <td>{{ record.status }}</td>
+                        <td>{{ record.QUALIFICATION }}</td>
+                        <td>{{ record['Bid Type'] }}</td>
+                        <td>{{ record['Main Product Category'] }}</td>
+                        <td>{{ record.category }}</td>
+                        <td>{{ record.username }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

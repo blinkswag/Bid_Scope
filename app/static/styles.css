@@ -1,7 +1,7 @@
 body, html {
     height: 100%;
     margin: 0;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Poppins', sans-serif;
     background: #141414;
     overflow: hidden; /* Prevent body scroll */
 }
@@ -9,6 +9,7 @@ body, html {
 .main-container {
     display: flex;
     height: 100%;
+    flex-direction: column; /* Default to column layout for smaller screens */
 }
 
 .button-48 {
@@ -137,10 +138,6 @@ body, html {
     max-width: 80%;
 }
 
-.input-group {
-    display: flex;
-    align-items: center;
-}
 
 input[type="text"] {
     flex: 1;
@@ -648,11 +645,6 @@ h6 {
     height: 50px;
 }
 
-.input-group {
-    display: flex;
-    align-items: center;
-}
-
 .send-button {
     height: 43px;
     width: 43px;
@@ -684,14 +676,6 @@ h6 {
     padding: 5px;
 }
 
-.cssbuttons-io-button {
-    width: 90%; 
-    height: 60%;
-    max-width: 300px; 
-    max-height: 50px; 
-}
-
-
 button {
     position: relative;
     display: inline-block;
@@ -708,10 +692,10 @@ button {
 
 button.learn-more {
     width: 12rem;
-    height: 2.5rem; 
-    margin-bottom: 10px; 
-    padding-top: 5px; 
-    padding-left: 5px; 
+    height: 2.5rem;
+    margin-bottom: 10px;
+    padding-top: 5px;
+    padding-left: 5px;
 }
 
 button.learn-more .circle {
@@ -720,8 +704,8 @@ button.learn-more .circle {
     position: relative;
     display: block;
     margin: 0;
-    width: 2.5rem; 
-    height: 2.5rem; 
+    width: 2.5rem;
+    height: 2.5rem;
     background: #fcc404;
     border-radius: 1.625rem;
 }
@@ -762,14 +746,14 @@ button.learn-more .button-text {
     left: 0;
     right: 0;
     bottom: 0;
-    padding: 0.5rem 0; 
+    padding: 0.5rem 0;
     margin: 0 0 0 1.85rem;
     color: white;
     font-weight: 500;
     line-height: 1.6;
     text-align: center;
     text-transform: uppercase;
-    font-size: 0.6rem; 
+    font-size: 0.6rem;
 }
 
 button.learn-more:hover .circle {
@@ -779,7 +763,7 @@ button.learn-more:hover .circle {
 
 button.learn-more:hover .button-text {
     transform: translate(-1.7rem, 0);
-    color: black; 
+    color: black;
 }
 
 button.learn-more:hover .circle .icon.arrow {
@@ -798,7 +782,7 @@ button.learn-more:active .circle {
 }
 
 button.learn-more:hover .button-text {
-    color: black; 
+    color: black;
 }
 
 button.learn-more:active .button-text {
@@ -808,6 +792,7 @@ button.learn-more:active .button-text {
 .main-container {
     display: flex;
     height: 100vh;
+    flex-direction: row; /* Ensure default flex direction is row */
 }
 
 .chat-container {
@@ -819,13 +804,13 @@ button.learn-more:active .button-text {
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
-    align-items: flex-end; 
+    align-items: flex-end;
     background-color: rgb(255, 255, 255);
     border: transparent;
     margin-top: 10px;
     border-radius: 20px;
-    width: 100%; 
-    margin-left: auto; 
+    width: 100%;
+    margin-left: auto;
 }
 
 .suggestion-btn {
@@ -834,8 +819,8 @@ button.learn-more:active .button-text {
     border: none;
     border-radius: 20px;
     padding: 10px 20px;
-    margin: 8px 0; 
-    width: auto; 
+    margin: 8px 0;
+    width: auto;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
     font-size: 14px;
@@ -944,7 +929,7 @@ button.learn-more:active .button-text {
 }
 
 #renameThreadName {
-    width: 60%; 
+    width: 60%;
     padding: 10px;
     margin-right: 10px;
 }
@@ -967,12 +952,12 @@ button.learn-more:active .button-text {
 }
 
 .modal-dialog {
-    max-width: 80%; 
+    max-width: 80%;
 }
 
 .cssbuttons-io-button {
     width: 16em;
-    height: 3em; 
+    height: 3em;
     background: #f9b904;
     color: #141414;
     font-family: inherit;
@@ -988,7 +973,15 @@ button.learn-more:active .button-text {
     cursor: pointer;
     justify-content: left;
     padding-left: 10px;
-    margin: 10px 0; /* Added margin for spacing */
+    margin: 10px 0; 
+    background-color: #141414;
+    border: 2px solid #fcc404;
+    color: #fcc404;
+    padding: 10px 20px;
+    width: 100%;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
 }
 
 .cssbuttons-io-button .icon {
@@ -998,10 +991,11 @@ button.learn-more:active .button-text {
     align-items: center;
     justify-content: center;
     width: 2.5em;
-    height: 2.5em; 
+    height: 2.5em;
     border-radius: 0.7em;
     right: 0.3em;
     transition: all 0.3s;
+    margin-left: auto;
 }
 
 .cssbuttons-io-button:hover .icon {
@@ -1015,8 +1009,8 @@ button.learn-more:active .button-text {
 }
 
 .cssbuttons-io-button .icon img {
-    width: 36px; 
-    height: 36px; 
+    width: 36px;
+    height: 36px;
 }
 
 .cssbuttons-io-button:hover .icon svg {
@@ -1049,51 +1043,32 @@ button.learn-more:active .button-text {
     width: 7%;
 }
 
-@media (max-width: 1200px) {
-    .sidebar {
-        flex: 0 0 25%;
-    }
-}
-
-@media (max-width: 992px) {
-    .sidebar {
-        flex: 0 0 30%;
-    }
-}
-
-@media (max-width: 768px) {
-    .sidebar {
-        flex: 0 0 100%;
-    }
-
-    .main-container {
-        flex-direction: column;
-    }
-
-    .logout-button {
-        width: 60%;
-        position: relative;
-        bottom: 0;
-        left: 0;
-        margin: 20px 0;
-    }
-
-    .profile-section, .cssbuttons-io-button {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-}
+/* Sidebar fixed width */
 
 .chat-container {
+    flex-grow: 1;
+    overflow: auto;
+    margin: 10px;
+    padding: 10px;
+    background-color: #ffffff;
     flex: 1;
     display: flex;
     flex-direction: column;
-    background: white;
     border-radius: 20px;
     box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
-    margin: 10px;
-    padding: 10px;
 }
+
+.sidebar {
+    width: 300px;
+    background-color: #141414;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+    position: relative;
+    overflow-y: auto;
+}
+
 
 .thread-container::-webkit-scrollbar {
     width: 3px;
@@ -1108,77 +1083,16 @@ button.learn-more:active .button-text {
     background-color: #555;
 }
 
-@media (max-width: 1200px) {
-    .sidebar {
-        flex: 0 0 25%;
-    }
-}
-
-@media (max-width: 992px) {
-    .sidebar {
-        flex: 0 0 30%;
-    }
-}
-
-.btn-theme {
-    background-color: #fcc404;
-    color: #ffffff;
-    width: 7%;
-}
-
 .sidebar .logout-button {
     margin-top: auto;
 }
 
 .thread-container {
     overflow-y: auto;
-    width: 100%;
-    padding-right: 10px; 
-    margin-bottom: 40px; 
-    max-height: calc(100vh - 20rem); 
-}
-
-@media (min-width: 1200px) {
-    .sidebar {
-        width: 20%;
-    }
-}
-
-@media (min-width: 992px) and (max-width: 1199.98px) {
-    .sidebar {
-        width: 25%;
-    }
-}
-
-@media (min-width: 768px) and (max-width: 991.98px) {
-    .sidebar {
-        width: 30%;
-    }
-}
-
-@media (max-width: 767.98px) {
-    .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-    }
-
-    .main-container {
-        flex-direction: column;
-    }
-
-    .logout-button {
-        width: 60%;
-        position: relative;
-        bottom: 0;
-        left: 0;
-        margin: 20px 0;
-    }
-
-    .profile-section, .cssbuttons-io-button {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+    width: 120%;
+    padding-right: 10px;
+    margin-bottom: 40px;
+    max-height: calc(100vh - 20rem);
 }
 
 .logout-button {
@@ -1195,51 +1109,7 @@ button.learn-more:active .button-text {
     bottom: 20px;
     left: 20px;
     height: 100%;
-    max-width: 250px; 
-    max-height: 50px; 
-    margin-top: 10px; 
-}
-
-.cssbuttons-io-button {
-    background-color: #141414;
-    border: 2px solid #fcc404;
-    color: #fcc404;
-    padding: 10px 20px;
-    margin: 10px 0;
-    width: 100%;
-    text-align: left;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.cssbuttons-io-button .icon {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-}
-
-.icon-button {
-    background: none;
-    border: none;
-    color: #fcc404;
-    cursor: pointer;
-}
-
-.btn-theme {
-    background-color: #fcc404;
-    color: #ffffff;
-    width: 7%;
-}
-
-.sidebar {
-    flex: 0 0 20%;
-    max-width: 20%;
-    background-color: #141414;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 10px;
-    position: relative;
-    overflow-y: auto;
+    max-width: 250px;
+    max-height: 50px;
+    margin-top: 5px;
 }

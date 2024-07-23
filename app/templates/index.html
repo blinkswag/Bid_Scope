@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +10,6 @@
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
     <title>BidBot</title>
 </head>
-
 <body>
     <div class="main-container">
         <div class="sidebar">
@@ -130,7 +128,7 @@
                             <input type="text" class="form-control" id="ticketNumber" required>
                         </div>
                         <input type="hidden" id="currentThreadId">
-                        <button type="submit" class="btn btn-3" id="submitTicketBtn">Fetch Ticket Details</button>
+                        <button type="submit" class="btn btn-3" id="submitTicketBtn">Fetch Details</button>
                     </form>
                     <div id="ticketDetails" style="display: none;">
                         <h3 id="ticketTitle">Title: N/A</h3>
