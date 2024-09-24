@@ -5,7 +5,7 @@ from app.db import Database
 
 db = Database()
 ALLOWED_EXTENSIONS = {'pdf', 'docx', 'txt'}
-MAX_CONTENT_LENGTH = 32 * 1024 * 1024
+MAX_CONTENT_LENGTH = 512 * 1024 * 1024
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
