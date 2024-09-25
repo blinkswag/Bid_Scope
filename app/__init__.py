@@ -1,4 +1,5 @@
-# __init__.py
+# app/__init__.py
+
 from flask import Flask, request, render_template, session
 from flask_session import Session
 import os
@@ -10,6 +11,7 @@ import logging
 from .services.ip_service import IPService
 from .views import init_app
 from .views.bid_records import init_bid_records_views
+from .scheduled_tasks import start_scheduler
 
 load_dotenv()
 
@@ -41,5 +43,10 @@ def create_app():
 
     init_app(app, token_manager)
     init_bid_records_views(app)
+
+    # Start the scheduler
+    with app.app_context():
+        logging.info("Starting the scheduler within the app context")
+        start_scheduler()
 
     return app

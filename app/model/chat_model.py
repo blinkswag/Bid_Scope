@@ -3,7 +3,6 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import json
 from io import BytesIO
-from bson import ObjectId
 from app.db import Database  # Import Database class
 import logging
 logger = logging.getLogger(__name__)
@@ -24,16 +23,41 @@ class ChatModel:
             file_storage.seek(0)
             file_like_object = BytesIO(file_bytes)
             file_like_object.name = file_storage.filename
+            
+            # Step 1: Upload the file
             pdf = self.client.files.create(file=file_like_object, purpose="assistants")
-            file_status = self.client.beta.vector_stores.files.create_and_poll(vector_store_id=self.vector_store_id, file_id=pdf.id).status
-            self.client.beta.assistants.update(
-                assistant_id=self.assistant_id,
-                tool_resources={"file_search": {"vector_store_ids": [self.vector_store_id]}}
-            )
-            return f"File Upload Status: {file_status}"
+            file_id = pdf.id
+            
+            # Step 2: Poll the vector database for file upload status
+            file_status = self.client.beta.vector_stores.files.create_and_poll(
+                vector_store_id=self.vector_store_id, file_id=file_id
+            ).status
+            
+            if file_status != "completed":
+                return f"Failed to upload file '{file_like_object.name}' to vector database. Status: {file_status}"
+
+            # Step 3: Check the file status using the list method
+            vs_files = self.client.beta.vector_stores.files.list(vector_store_id=self.vector_store_id)
+            result = self.check_file_status(vs_files.data, file_id)
+            return result  # This will return a message indicating the status of the file.
+
         except Exception as e:
             print(f"Failed to upload file: {e}")
             return str(e)
+
+    # Utility function to check the file status and log any errors
+    def check_file_status(self, vs_files, file_id):
+        for file in vs_files:
+            if file.id == file_id:
+                if file.status == 'completed':
+                    return f"File {file_id} uploaded successfully to vector database and processing is complete."
+                elif file.status == 'failed':
+                    # Check for errors if the status is failed
+                    error_message = file.last_error.message if file.last_error else "Unknown error."
+                    return f"File {file_id} failed to upload. Error: {error_message}."
+                else:
+                    return f"File {file_id} status is: {file.status} (processing)."
+        return f"File {file_id} not found."
 
     def create_thread(self, name=None):
         try:

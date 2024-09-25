@@ -114,7 +114,6 @@
             </form>
         </div>
     </div>
-    <!-- ticket modal -->
     <div class="modal fade" id="ticketModal" tabindex="-1" aria-labelledby="ticketModalLabel" aria-hidden="true">
         <div class="modal-dialog custom-modal-width">
             <div class="modal-content">
@@ -145,7 +144,6 @@
         </div>
     </div>
 
-    <!-- Ticket Details Display -->
     <div id="ticketDetails" style="display: none;">
         <h3 id="ticketTitle">Title: N/A</h3>
         <p id="ticketClassification">Classification: N/A</p>
@@ -301,40 +299,114 @@
         }
 
         function sendMessage(messageText, threadId) {
+    // Disable the message input and file upload while the bot is thinking
+            $('#messageInput').prop('disabled', true);
+            $('#fileUpload').prop('disabled', true);
+            $('.send-button').prop('disabled', true);  // Disable send button
+            
             var formData = new FormData($('#chatForm')[0]);
             formData.append('message', messageText);
             formData.append('thread_id', threadId);
-            $('#chatWindow').append('<div class="message-container user"><div class="message user-message">' + messageText + '</div><img src="static/User.png" class="avatar"></div>');
-            $('#messageInput').val('');
+            
+            // Append the user's message to the chat window
+            $('#chatWindow').append(`
+                <div class="message-container user">
+                    <div class="message user-message">${messageText}</div>
+                    <img src="static/User.png" class="avatar">
+                </div>
+            `);
+            
+            $('#messageInput').val('');  // Clear the input field
+
             var loadingElementId = 'loadingMessage' + Date.now();
-            var loadingHtml = '<div id="' + loadingElementId + '" class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response"><img src="static/wait.gif" style="width:50px;height:50px;"></div></div>';
+            
+            // Append "Bid Bot Thinking..." along with the wait.gif
+            var loadingHtml = `
+                <div id="${loadingElementId}" class="message-container bot">
+                    <img src="static/blinksigns_logo.jpg" class="avatar">
+                    <div class="message bot-response">
+                        <img src="static/wait.gif" style="width:50px;height:50px;"> Bid Bot Thinking...
+                    </div>
+                </div>
+            `;
+            
             $('#chatWindow').append(loadingHtml);
             scrollToBottom();
+            
             $.ajax({
                 type: 'POST',
-                url: '/',
+                url: '/',  // Backend endpoint
                 data: formData,
                 processData: false,
                 contentType: false,
                 success: function(response) {
+                    // Remove the "Bid Bot Thinking..." message after the response is received
                     $('#' + loadingElementId).remove();
-                    $('#chatWindow').append('<div class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response">' + response.message + '</div></div>');
+                    
+                    // Append the bot's response to the chat window
+                    $('#chatWindow').append(`
+                        <div class="message-container bot">
+                            <img src="static/blinksigns_logo.jpg" class="avatar">
+                            <div class="message bot-response">${response.message}</div>
+                        </div>
+                    `);
                     scrollToBottom();
+
+                    // Enable the message input and file upload after the bot responds
+                    $('#messageInput').prop('disabled', false);
+                    $('#fileUpload').prop('disabled', false);
+                    $('.send-button').prop('disabled', false);
                 },
                 error: function() {
+                    // Handle error (optional)
                     $('#' + loadingElementId).remove();
-                    $('#chatWindow').append('<div class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response">Failed to send message.</div></div>');
+                    $('#chatWindow').append(`
+                        <div class="message-container bot">
+                            <img src="static/blinksigns_logo.jpg" class="avatar">
+                            <div class="message bot-response">Failed to send message.</div>
+                        </div>
+                    `);
                     scrollToBottom();
+                    
+                    // Enable the message input and file upload in case of an error
+                    $('#messageInput').prop('disabled', false);
+                    $('#fileUpload').prop('disabled', false);
+                    $('.send-button').prop('disabled', false);
                 }
             });
         }
 
         $('#fileUpload').on('change', function() {
             var files = $(this).prop('files');
-            if (files.length === 0) {
-                alert('Please select a file to upload.');
-                return;
+            
+            // Disable message input and file upload while file is uploading
+            $('#messageInput').prop('disabled', true);
+            $('#fileUpload').prop('disabled', true);
+            $('.send-button').prop('disabled', true);
+
+            var maxFileSize = 512 * 1024 * 1024;  // 512MB in bytes
+            var allowedExtensions = ['pdf', 'docx', 'txt'];
+            
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                var fileExtension = file.name.split('.').pop().toLowerCase();
+                
+                if (!allowedExtensions.includes(fileExtension)) {
+                    alert('Invalid file format: ' + file.name + '. Only PDF, DOCX, and TXT are allowed.');
+                    $('#messageInput').prop('disabled', false);
+                    $('#fileUpload').prop('disabled', false);
+                    $('.send-button').prop('disabled', false);
+                    return;  
+                }
+                if (file.size > maxFileSize) {
+                    alert('File "' + file.name + '" exceeds the 512MB limit.');
+                    $('#messageInput').prop('disabled', false);
+                    $('#fileUpload').prop('disabled', false);
+                    $('.send-button').prop('disabled', false);
+                    return;
+                }
             }
+
             var threadId = $('#threadId').val();
             if (!threadId) {
                 createNewThreadAndProcessFiles(files);
@@ -361,42 +433,130 @@
         }
 
         function processFiles(index, files, threadId) {
-            if (index >= files.length) {
-                return;
-            }
-            var file = files[index];
-            var fileName = file.name;
-            var predefinedMessage = `From the file "${fileName}", scan the bid files for critical information essential for bidding, covering topics such as Project Overview and Scope of Work, product specifications, submission guidelines, Evaluation Criteria, financial and legal compliance, delivery and packaging, critical elements and deadlines, Terms and Conditions, Insurance and Bonding Requirements, Clarifications and Addenda, Bid Pricing and Cost Breakdown and Bid Pricing and Cost Breakdown and more such kind of topics. Explain this information in an organized and structured manner. Extract information pertinent to bidding. Your response should be in detail with high explanation of each topics, and don't miss any information from bid file. `;
-            var formData = new FormData();
-            formData.append('file', file);
-            formData.append('message', predefinedMessage);
-            formData.append('thread_id', threadId);
-            var loadingElementId = 'loadingMessage' + Date.now();
-            var fileLoadingHtml = '<div id="' + loadingElementId + '" class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response"><img src="static/upload.gif" style="width:50px;height:50px;"> File Uploading...</div></div>';
-            $('#chatWindow').append(fileLoadingHtml);
+    if (index >= files.length) {
+                // Enable the message input and file upload once the files are processed
+        $('#messageInput').prop('disabled', false);
+        $('#fileUpload').prop('disabled', false);
+        $('.send-button').prop('disabled', false);
+        
+        return;
+    }
+
+    var file = files[index];
+    var fileName = file.name;
+    var maxFileSize = 512 * 1024 * 1024;  // 512MB in bytes
+    var allowedExtensions = ['pdf', 'docx', 'txt'];
+    var fileExtension = fileName.split('.').pop().toLowerCase();
+
+    // Step 1: Display 'Checking File Validity...' with verify.gif animation
+    var loadingElementId = 'loadingMessage' + Date.now();
+    var validityCheckHtml = `
+        <div id="${loadingElementId}" class="message-container bot">
+            <img src="static/blinksigns_logo.jpg" class="avatar">
+            <div class="message bot-response">
+                <img src="static/verify.gif" style="width:50px;height:50px;"> Checking File Validity...
+            </div>
+        </div>`;
+    $('#chatWindow').append(validityCheckHtml);
+    scrollToBottom();
+
+    // Use a short delay to ensure that the "Checking File Validity" message is displayed before running validation
+    setTimeout(function() {
+
+        // Step 2: Validate file format and size on the frontend
+        if (!allowedExtensions.includes(fileExtension)) {
+            $('#' + loadingElementId).remove();
+            $('#chatWindow').append(`
+                <div class="message-container bot">
+                    <div class="message bot-response">Invalid file format: ${fileName}. Only PDF, DOCX, and TXT are allowed.</div>
+                </div>
+            `);
             scrollToBottom();
-            $.ajax({
-                type: 'POST',
-                url: '/',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
+            processFiles(index + 1, files, threadId);  // Move to the next file
+            return;
+        }
+
+        if (file.size > maxFileSize) {
+            $('#' + loadingElementId).remove();
+            $('#chatWindow').append(`
+                <div class="message-container bot">
+                    <div class="message bot-response">File "${fileName}" exceeds the 512MB limit.</div>
+                </div>
+            `);
+            scrollToBottom();
+            processFiles(index + 1, files, threadId);  // Move to the next file
+            return;
+        }
+
+        // Step 3: File is valid, now display 'Uploading File to Vector Database...' with upload.gif animation
+        $('#' + loadingElementId).remove();
+        var fileUploadingHtml = `
+            <div id="${loadingElementId}" class="message-container bot">
+                <img src="static/blinksigns_logo.jpg" class="avatar">
+                <div class="message bot-response">
+                    <img src="static/upload.gif" style="width:50px;height:50px;"> Uploading File to Database...
+                </div>
+            </div>`;
+        $('#chatWindow').append(fileUploadingHtml);
+        scrollToBottom();
+
+        var predefinedMessage = `From the file "${fileName}", scan the bid files for critical information essential for bidding, covering topics such as Project Overview and Scope of Work, specifications, plan, schedule, Quantity, and deadlines, Terms and Conditions, Insurance and Bonding Requirements, Clarifications and Addenda, and Bid Pricing and Cost Breakdown and more such kind of topics. Explain this information in an organized and structured manner. Extract information pertinent to bidding. Your response should be in detail with high explanation of each topics, and don't miss any information from bid file. `;
+        
+        var formData = new FormData();
+        formData.append('file', file);
+        formData.append('message', predefinedMessage);
+        formData.append('thread_id', threadId);
+
+        $.ajax({
+            type: 'POST',
+            url: '/',  // Endpoint where the file is being processed
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                $('#' + loadingElementId).remove();
+
+                // Step 4: Display 'Bid Bot Thinking...' with wait.gif animation
+                var botThinkingHtml = `
+                    <div id="${loadingElementId}" class="message-container bot">
+                        <img src="static/blinksigns_logo.jpg" class="avatar">
+                        <div class="message bot-response">
+                            <img src="static/wait.gif" style="width:50px;height:50px;"> Bid Bot Thinking...
+                        </div>
+                    </div>`;
+                $('#chatWindow').append(botThinkingHtml);
+                scrollToBottom();
+
+                // Once the bot has finished thinking, display the result
+                setTimeout(function() {
                     $('#' + loadingElementId).remove();
-                    $('#chatWindow').append('<div class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response">' + response.message + '</div></div>');
+                    $('#chatWindow').append(`
+                        <div class="message-container bot">
+                            <img src="static/blinksigns_logo.jpg" class="avatar">
+                            <div class="message bot-response">${response.message}</div>
+                        </div>
+                    `);
                     $('#messageInput').val('');
                     $('#threadId').val(response.thread_id);
                     scrollToBottom();
-                    processFiles(index + 1, files, threadId);
-                },
-                error: function(xhr, status, error) {
-                    $('#' + loadingElementId).remove();
-                    $('#chatWindow').append('<div class="message-container bot"><img src="static/blinksigns_logo.jpg" class="avatar"><div class="message bot-response">Failed to upload file.</div></div>');
-                    scrollToBottom();
-                    processFiles(index + 1, files, threadId);
-                }
-            });
-        }
+                    processFiles(index + 1, files, threadId);  // Process the next file if there are more
+                }, 2000);  // Simulate processing time for thinking
+            },
+            error: function(xhr, status, error) {
+                $('#' + loadingElementId).remove();
+                $('#chatWindow').append(`
+                    <div class="message-container bot">
+                        <img src="static/blinksigns_logo.jpg" class="avatar">
+                        <div class="message bot-response">Failed to upload file.</div>
+                    </div>
+                `);
+                scrollToBottom();
+                processFiles(index + 1, files, threadId);  // Continue to the next file on error
+            }
+        });
+
+    }, 100);  // Delay for UI update
+}
 
         function scrollToBottom() {
             $('#chatWindow').animate({
@@ -604,4 +764,4 @@
     </script>
 </body>
 
-</html>
+</html> 

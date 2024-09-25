@@ -9,7 +9,6 @@ from app.db import Database
 
 db = Database()
 
-# chat_controller.py
 class ChatController:
     def __init__(self):
         self.chat_model = ChatModel()
@@ -22,25 +21,30 @@ class ChatController:
                     thread = self.chat_model.create_thread(name=thread_name)
                 else:
                     thread = self.chat_model.create_thread()
-                thread_id = thread.id
-                response['thread_id'] = thread_id
+                response['thread_id'] = thread.id
             else:
                 user_id = session.get('user_id')
                 db.update_user_threads(user_id, thread_id)
 
+            # Process files if uploaded
             if files:
                 file_statuses = []
                 for file in files:
+                    # Step 1: Validate File Format and Size (display 'Checking file validity...')
                     valid, error = validate_file(file)
-                    if not valid:
+                    if not valid:  # If validation fails (size or type)
                         response['messages'].append(error)
-                        return response
+                        return response  # Return early with error response
+
+                    # Step 2: Once valid, upload to the vector database (display 'Uploading to Vector Database...')
                     filename = secure_filename(file.filename)
                     file_status = self.chat_model.upload_file(file)
                     file_statuses.append(f"{filename}: {file_status}")
                     session['uploaded_file_name'] = filename  # Store the uploaded file name in the session
+
                 response['messages'].extend(file_statuses)
 
+            # Step 3: Process the message (display 'Bid Bot Thinking...' and process)
             if message:
                 if 'uploaded_file_name' in session:
                     message = f'From the file {session["uploaded_file_name"]}: {message}'

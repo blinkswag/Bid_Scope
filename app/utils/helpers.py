@@ -2,10 +2,10 @@ import re
 from flask import redirect, url_for, session
 from functools import wraps
 from app.db import Database
-
+import os
 db = Database()
 ALLOWED_EXTENSIONS = {'pdf', 'docx', 'txt'}
-MAX_CONTENT_LENGTH = 32 * 1024 * 1024
+MAX_CONTENT_LENGTH = 512 * 1024 * 1024
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -13,8 +13,15 @@ def allowed_file(filename):
 def validate_file(file):
     if not allowed_file(file.filename):
         return False, f'File type not allowed: {file.filename}'
-    if file.content_length > MAX_CONTENT_LENGTH:
+
+    # Check file size manually
+    file.seek(0, os.SEEK_END)  # Move pointer to end of the file
+    file_size = file.tell()  # Get file size in bytes
+    file.seek(0)  # Reset file pointer to the beginning
+
+    if file_size > MAX_CONTENT_LENGTH:
         return False, f'File too large: {file.filename} (max allowed is {MAX_CONTENT_LENGTH / (1024 * 1024)} MB)'
+
     return True, ''
 
 def remove_bracketed_content(text):

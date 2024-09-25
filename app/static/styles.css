@@ -1113,3 +1113,29 @@ button.learn-more:active .button-text {
     max-height: 50px;
     margin-top: 5px;
 }
+
+
+/* messing up */
+
+body {
+    transform: scale(0.9);
+    transform-origin: top left; /* Ensures scaling happens from the top-left corner */
+    width: 110%; /* Adjust the width to compensate for the scaling */
+    height: 110%; /* Adjust height */
+    overflow: hidden; /* Prevent unwanted scrolling */
+}
+html {
+    font-size: 90%; /* Reduce all text and layout dimensions proportionally */
+}
+
+.main-container {
+    height: 110vh; /* Use viewport height to ensure it always takes the full screen height */
+    display: flex;
+}
+
+.sidebar, .chat-container {
+    height: 100%;
+}
+/* .sidebar{
+    width:110%;
+} */
