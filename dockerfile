@@ -3,6 +3,7 @@ FROM 861598176062.dkr.ecr.us-east-2.amazonaws.com/python-base:latest
 WORKDIR /app
 
 COPY requirements.txt requirements.txt
+RUN pip install --upgrade pip
 RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host=files.pythonhosted.org -r requirements.txt
 
 COPY . .
